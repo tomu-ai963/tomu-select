@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tomu select — AI Products & Development Services</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --ink: #1c1a16;
+    --muted: #6f6a5e;
+    --faint: #9a9486;
+    --hairline: #e8e5dd;
+    --hairline-strong: #ddd8cc;
+    --gold: #c9a84c;
+    --gold-deep: #a8873a;
+    --gold-wash: rgba(201, 168, 76, 0.08);
+    --error: #b0503c;
+    --skel: #eeece6;
+    --skel-shine: #f6f4ef;
+    --shadow: 0 1px 2px rgba(28, 26, 22, 0.04), 0 4px 16px rgba(28, 26, 22, 0.05);
+    --shadow-lift: 0 2px 4px rgba(28, 26, 22, 0.05), 0 12px 32px rgba(28, 26, 22, 0.09);
+    --shadow-modal: 0 8px 24px rgba(28, 26, 22, 0.12), 0 24px 64px rgba(28, 26, 22, 0.18);
+    --radius: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16140f;
+      --surface: #1e1c16;
+      --ink: #ece8dd;
+      --muted: #a59d8b;
+      --faint: #7c7565;
+      --hairline: #2c2920;
+      --hairline-strong: #3a362a;
+      --gold: #d4b45f;
+      --gold-deep: #e0c377;
+      --gold-wash: rgba(212, 180, 95, 0.09);
+      --error: #d4715c;
+      --skel: #262319;
+      --skel-shine: #2e2a1f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+      --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
+      --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --ink: #1c1a16;
+    --muted: #6f6a5e;
+    --faint: #9a9486;
+    --hairline: #e8e5dd;
+    --hairline-strong: #ddd8cc;
+    --gold: #c9a84c;
+    --gold-deep: #a8873a;
+    --gold-wash: rgba(201, 168, 76, 0.08);
+    --error: #b0503c;
+    --skel: #eeece6;
+    --skel-shine: #f6f4ef;
+    --shadow: 0 1px 2px rgba(28, 26, 22, 0.04), 0 4px 16px rgba(28, 26, 22, 0.05);
+    --shadow-lift: 0 2px 4px rgba(28, 26, 22, 0.05), 0 12px 32px rgba(28, 26, 22, 0.09);
+    --shadow-modal: 0 8px 24px rgba(28, 26, 22, 0.12), 0 24px 64px rgba(28, 26, 22, 0.18);
+  }
+  :root[data-theme="dark"] {
+    --bg: #16140f;
+    --surface: #1e1c16;
+    --ink: #ece8dd;
+    --muted: #a59d8b;
+    --faint: #7c7565;
+    --hairline: #2c2920;
+    --hairline-strong: #3a362a;
+    --gold: #d4b45f;
+    --gold-deep: #e0c377;
+    --gold-wash: rgba(212, 180, 95, 0.09);
+    --error: #d4715c;
+    --skel: #262319;
+    --skel-shine: #2e2a1f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
+    --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.modal-open { overflow: hidden; }
+
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- Navigation ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 68px;
+  }
+  .logo {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+  .logo .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .nav-links a {
+    transition: color 0.15s ease;
+    padding: 4px 0;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1.5px;
+    background: var(--gold);
+  }
+  .btn {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; }
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--hairline-strong);
+  }
+  .btn-outline:hover { border-color: var(--gold); background: var(--gold-wash); color: var(--ink); }
+
+  /* Hamburger */
+  .nav-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    color: var(--ink);
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-toggle svg { width: 18px; height: 18px; display: block; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-bars { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+  .mobile-menu {
+    display: none;
+    border-top: 1px solid var(--hairline);
+    background: var(--bg);
+    padding: 8px 0 20px;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a {
+    display: block;
+    padding: 13px 32px;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .mobile-menu a.active { color: var(--ink); border-left: 2px solid var(--gold); padding-left: 30px; }
+  .mobile-menu .menu-cta { margin: 18px 32px 0; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    padding: 120px 0 110px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin: 0 0 28px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 68px);
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    line-height: 1.15;
+    margin: 0 0 24px;
+    text-wrap: balance;
+  }
+  .hero h1 strong { font-weight: 600; }
+  .hero p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 34em;
+    margin: 0 auto 44px;
+    text-wrap: balance;
+  }
+  .hero-rule {
+    width: 48px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 44px;
+    border: none;
+  }
+  .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* ---------- Sections ---------- */
+  .section { padding: 88px 0; scroll-margin-top: 68px; }
+  .section + .section { border-top: 1px solid var(--hairline); }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    margin: 0;
+  }
+  .section-head .sub { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* ---------- Product Grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: var(--hairline-strong);
+    transform: translateY(-2px);
+  }
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius);
+    color: var(--gold-deep);
+    background: var(--gold-wash);
+    flex-shrink: 0;
+  }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 4px 0 0;
+  }
+  .card .desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0;
+    flex: 1;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
+  }
+  .price {
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .price .per { font-size: 11px; font-weight: 400; color: var(--faint); margin-left: 2px; }
+  .card-link {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--gold-deep);
+    transition: color 0.15s ease;
+  }
+  .card:hover .card-link { color: var(--ink); }
+
+  /* ---------- Skeleton loading ---------- */
+  .card.skeleton { cursor: default; pointer-events: none; }
+  .skel {
+    background: var(--skel);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--skel-shine), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 1.4s infinite;
+  }
+  @keyframes shimmer {
+    to { transform: translateX(100%); }
+  }
+  .skel-icon { width: 40px; height: 40px; border-radius: var(--radius); }
+  .skel-title { width: 60%; height: 16px; margin-top: 4px; }
+  .skel-line { width: 100%; height: 11px; }
+  .skel-line.short { width: 72%; }
+  .skel-foot { display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--hairline); }
+  .skel-price { width: 80px; height: 15px; }
+  .skel-link { width: 64px; height: 12px; }
+
+  /* ---------- Modal ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(28, 26, 22, 0.4);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-modal);
+    width: min(560px, 100%);
+    max-height: min(85vh, 720px);
+    overflow-y: auto;
+    padding: 40px;
+    position: relative;
+    animation: modal-in 0.22s ease;
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .modal-close:hover { color: var(--ink); border-color: var(--gold); }
+  .modal-close svg { width: 14px; height: 14px; }
+  .modal-head { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .modal-head h3 { font-size: 20px; font-weight: 600; letter-spacing: 0.05em; margin: 0; }
+  .modal-cat {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--gold-deep);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 2px 12px;
+    margin: 6px 0 18px;
+    background: var(--gold-wash);
+  }
+  .modal-desc { font-size: 14px; color: var(--muted); margin: 0 0 24px; }
+  .modal h4 {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 12px;
+  }
+  .feature-list { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .feature-list li {
+    font-size: 13.5px;
+    color: var(--muted);
+    padding-left: 22px;
+    position: relative;
+  }
+  .feature-list li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.62em;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--gold-deep);
+    border-bottom: 1.5px solid var(--gold-deep);
+    transform: rotate(45deg) translateY(-50%);
+  }
+  .modal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid var(--hairline);
+  }
+  .modal-foot .price { font-size: 20px; }
+
+  /* ---------- Services ---------- */
+  .services-panel {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    overflow: hidden;
+  }
+  .services-info {
+    padding: 48px 44px;
+    border-right: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .services-info h3 {
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .services-info p { font-size: 14px; color: var(--muted); margin: 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .tag {
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    padding: 5px 14px;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .tag:hover, .tag[aria-pressed="true"] {
+    border-color: var(--gold);
+    color: var(--gold-deep);
+    background: var(--gold-wash);
+  }
+  .services-note {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+    font-size: 12.5px;
+    color: var(--faint);
+  }
+  .services-form {
+    padding: 48px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    scroll-margin-top: 84px;
+  }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .field label .req { color: var(--gold-deep); margin-left: 4px; letter-spacing: 0; }
+  .field input, .field select, .field textarea {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    transition: border-color 0.15s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--faint); }
+  .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--gold); }
+  .field textarea { resize: vertical; min-height: 96px; }
+  .field.invalid input, .field.invalid textarea { border-color: var(--error); }
+  .err-msg { font-size: 12px; color: var(--error); margin: 0; display: none; }
+  .field.invalid .err-msg { display: block; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .form-foot .hint { font-size: 12px; color: var(--faint); }
+
+  /* Success state */
+  .form-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 18px;
+    padding: 48px 44px;
+    min-height: 420px;
+    scroll-margin-top: 84px;
+  }
+  .form-success.show { display: flex; }
+  .services-form.hidden { display: none; }
+  .success-mark {
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--gold-deep);
+    background: var(--gold-wash);
+  }
+  .success-mark svg { width: 24px; height: 24px; }
+  .form-success h3 { font-size: 18px; font-weight: 600; letter-spacing: 0.08em; margin: 0; }
+  .form-success p { font-size: 13.5px; color: var(--muted); margin: 0; max-width: 26em; }
+  .link-reset {
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    color: var(--gold-deep);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px;
+  }
+  .link-reset:hover { color: var(--ink); }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    border-top: 1px solid var(--hairline);
+    padding: 64px 0 40px;
+    margin-top: 24px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 56px;
+  }
+  .footer-brand p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 14px 0 0;
+    max-width: 22em;
+  }
+  .footer h4 {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 16px;
+  }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer ul a { font-size: 13px; color: var(--muted); transition: color 0.15s ease; }
+  .footer ul a:hover { color: var(--gold-deep); }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    font-size: 12px;
+    color: var(--faint);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .services-panel { grid-template-columns: 1fr; }
+    .services-info { border-right: none; border-bottom: 1px solid var(--hairline); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 20px; }
+    .nav-links, .nav-cta { display: none; }
+    .nav-toggle { display: flex; }
+    .hero { padding: 80px 0 72px; }
+    .section { padding: 64px 0; }
+    .grid { grid-template-columns: 1fr; }
+    .services-info, .services-form { padding: 32px 24px; }
+    .form-success { padding: 32px 24px; }
+    .field-row { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    .modal { padding: 32px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+    .card:hover { transform: none; }
+    .skel::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="#top">tomu select<span class="dot" aria-hidden="true"></span></a>
+    <nav class="nav-links" aria-label="メインナビゲーション">
+      <a href="#products" data-spy="products">Products</a>
+      <a href="#services" data-spy="services">Services</a>
+      <a href="#about" data-spy="about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn btn-outline nav-cta" href="#contact">お問い合わせ</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="メニューを開く">
+      <svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu" aria-label="モバイルナビゲーション">
+    <a href="#products" data-spy="products">Products</a>
+    <a href="#services" data-spy="services">Services</a>
+    <a href="#about" data-spy="about">About</a>
+    <a href="#contact">Contact</a>
+    <a class="btn btn-outline menu-cta" href="#contact">お問い合わせ</a>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero container">
+    <p class="eyebrow">AI Products &amp; Development</p>
+    <h1>tomu <strong>select</strong></h1>
+    <hr class="hero-rule">
+    <p>AIプロダクトを、開発者のために。選び抜かれたツールの提供と、御社の課題に合わせた受託開発を、ひとつの窓口で。</p>
+    <div class="hero-cta">
+      <a class="btn" href="#products">Browse Products</a>
+      <a class="btn btn-outline" href="#services">開発を依頼する</a>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="section" id="products">
+    <div class="container">
+      <div class="section-head">
+        <h2>Products</h2>
+        <p class="sub">現場で検証済みのAIプロダクトを、そのまま導入できる形で。</p>
+      </div>
+      <div class="grid" id="product-grid" aria-live="polite" aria-busy="true"></div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-head">
+        <h2>Services</h2>
+        <p class="sub">既製品で足りない部分は、要件に合わせてお作りします。</p>
+      </div>
+      <div class="services-panel">
+        <div class="services-info">
+          <h3>開発を依頼する</h3>
+          <p>AIエージェント構築、RAG基盤、業務自動化、API連携——小さなPoCから本番運用まで、段階に合わせてご提案します。まずは課題をお聞かせください。</p>
+          <div class="tags" role="group" aria-label="依頼カテゴリ">
+            <button class="tag" type="button" aria-pressed="true">AIエージェント</button>
+            <button class="tag" type="button" aria-pressed="false">RAG / 検索基盤</button>
+            <button class="tag" type="button" aria-pressed="false">業務自動化</button>
+            <button class="tag" type="button" aria-pressed="false">API連携</button>
+            <button class="tag" type="button" aria-pressed="false">PoC検証</button>
+            <button class="tag" type="button" aria-pressed="false">その他</button>
+          </div>
+          <p class="services-note">通常2営業日以内にご返信します。秘密保持契約(NDA)の締結にも対応しています。</p>
+        </div>
+        <form class="services-form" id="contact" novalidate>
+          <div class="field-row">
+            <div class="field" data-field="name">
+              <label for="f-name">お名前<span class="req">*</span></label>
+              <input id="f-name" type="text" placeholder="山田 太郎" autocomplete="name">
+              <p class="err-msg">お名前を入力してください。</p>
+            </div>
+            <div class="field">
+              <label for="f-company">会社名</label>
+              <input id="f-company" type="text" placeholder="株式会社サンプル" autocomplete="organization">
+            </div>
+          </div>
+          <div class="field" data-field="email">
+            <label for="f-email">メールアドレス<span class="req">*</span></label>
+            <input id="f-email" type="email" placeholder="you@example.co.jp" autocomplete="email">
+            <p class="err-msg">有効なメールアドレスを入力してください。</p>
+          </div>
+          <div class="field">
+            <label for="f-budget">ご予算の目安</label>
+            <select id="f-budget">
+              <option>選択してください</option>
+              <option>〜50万円</option>
+              <option>50〜150万円</option>
+              <option>150〜500万円</option>
+              <option>500万円〜 / 継続契約</option>
+            </select>
+          </div>
+          <div class="field" data-field="detail">
+            <label for="f-detail">ご相談内容<span class="req">*</span></label>
+            <textarea id="f-detail" placeholder="解決したい課題や、想定しているスケジュールをお書きください。"></textarea>
+            <p class="err-msg">ご相談内容を入力してください。</p>
+          </div>
+          <div class="form-foot">
+            <span class="hint">送信いただいた内容は相談目的以外には使用しません。</span>
+            <button class="btn" type="submit">相談内容を送信</button>
+          </div>
+        </form>
+        <div class="form-success" id="form-success" role="status" tabindex="-1">
+          <div class="success-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12.5l4.5 4.5L19 7.5"/>
+            </svg>
+          </div>
+          <h3>送信しました</h3>
+          <p>お問い合わせありがとうございます。通常2営業日以内に、担当者よりメールにてご返信します。</p>
+          <button class="link-reset" type="button" id="form-reset">別の相談内容を送る →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About strip -->
+  <section class="section" id="about">
+    <div class="container" style="text-align: center;">
+      <p class="eyebrow">About</p>
+      <p style="max-width: 38em; margin: 0 auto; color: var(--muted); text-wrap: balance;">
+        tomu select は、自社プロダクトの開発・運用で得た知見をもとに、実務で機能するAIツールだけを選んで提供するプラットフォームです。売って終わりではなく、導入後の運用まで並走します。
+      </p>
+    </div>
+  </section>
+</main>
+
+<!-- Product detail modal -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" type="button" id="modal-close" aria-label="閉じる">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+    <div class="modal-head">
+      <div class="card-icon" id="modal-icon" aria-hidden="true"></div>
+      <h3 id="modal-title"></h3>
+    </div>
+    <span class="modal-cat" id="modal-cat"></span>
+    <p class="modal-desc" id="modal-desc"></p>
+    <h4>主な機能</h4>
+    <ul class="feature-list" id="modal-features"></ul>
+    <div class="modal-foot">
+      <span class="price" id="modal-price"></span>
+      <button class="btn" type="button" id="modal-cta">導入相談する</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="#top">tomu select<span class="dot" aria-hidden="true"></span></a>
+        <p>AIプロダクトの販売と受託開発のB2Bハブ。検証済みのツールと、確かな実装力を。</p>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <ul>
+          <li><a href="#products">AP Invoice Reader</a></li>
+          <li><a href="#products">Contract Review AI</a></li>
+          <li><a href="#products">Knowledge RAG</a></li>
+          <li><a href="#products">すべて見る</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">受託開発</a></li>
+          <li><a href="#services">PoC検証</a></li>
+          <li><a href="#services">技術顧問</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#">News</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">利用規約</a></li>
+          <li><a href="#">プライバシーポリシー</a></li>
+          <li><a href="#">特定商取引法に基づく表記</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 tomu select. All rights reserved.</span>
+      <span>Tokyo, Japan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  'use strict';
+
+  /* ==================== Product data ====================
+     将来的にAPI取得へ差し替える前提。
+     取得中: renderSkeleton(grid, n) → 取得後: renderProducts(grid, data) */
+  var ICONS = {
+    invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z"/><path d="M9.5 12l2 2 3.5-4"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/><path d="M11 8.5v5M8.5 11h5"/></svg>',
+    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4-8 4 5 3-3 5 6"/><path d="M4 21h16"/></svg>',
+    board: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 14h4"/></svg>',
+    code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-4 5 4 5M16 7l4 5-4 5"/><path d="M13.5 5l-3 14"/></svg>'
+  };
+
+  var PRODUCTS = [
+    {
+      id: 'ap-invoice',
+      icon: 'invoice',
+      name: 'AP Invoice Reader',
+      desc: '請求書PDFをAIが構造化データへ自動変換。会計システム連携まで見据えた抽出精度を、経理の現場基準で。',
+      fullDesc: '毎月届く形式バラバラの請求書PDFを、勘定科目・税区分まで揃った構造化データに自動変換します。人の目によるダブルチェックを前提とした確信度スコア付きで、経理業務の締め作業を大幅に短縮します。',
+      price: '¥48,000', per: '/月',
+      category: '業務自動化',
+      features: ['多様な請求書レイアウトの自動認識', '項目ごとの確信度スコア表示', '会計システム向けCSV / API出力', '仕訳ルールの学習・カスタマイズ', '処理履歴の監査ログ']
+    },
+    {
+      id: 'contract-review',
+      icon: 'shield',
+      name: 'Contract Review AI',
+      desc: '建設業向け契約書レビュー支援。リスク条項の検出と修正提案を、監査ログ付きで安全に運用できます。',
+      fullDesc: '建設業の契約実務に特化したレビューエンジンが、不利な条項・欠落しがちな条項を検出し、修正文案まで提案します。すべてのレビュー実行が監査ログとして残るため、社内統制の要件にもそのまま対応できます。',
+      price: '¥120,000', per: '/月',
+      category: 'AIエージェント',
+      features: ['建設業特化のリスク条項検出', '修正文案の自動提案', 'レビュー実行の完全な監査ログ', '社内ひな形との差分比較', '弁護士レビュー連携ワークフロー']
+    },
+    {
+      id: 'knowledge-rag',
+      icon: 'search',
+      name: 'Knowledge RAG',
+      desc: '社内ドキュメントを横断検索できるRAG基盤。根拠付きの回答で、ナレッジの属人化を解消します。',
+      fullDesc: '規程・議事録・技術資料など社内に散らばるドキュメントを一元インデックス化し、自然文の質問に根拠リンク付きで回答します。「どこに書いてあるか分からない」を解消し、ベテランの知見を組織の資産に変えます。',
+      price: '¥68,000', per: '/月',
+      category: 'RAG / 検索基盤',
+      features: ['複数ソースの横断インデックス', '根拠箇所へのリンク付き回答', '回答品質メトリクスの計測', 'アクセス権限に応じた検索制御', 'Slack / Teams連携']
+    },
+    {
+      id: 'deflect',
+      icon: 'chart',
+      name: 'Deflect Analytics',
+      desc: '問い合わせ自動応答の解決率を可視化。AIが答えた・答えられなかったを計測し、改善サイクルを回せます。',
+      fullDesc: 'AI自動応答の「解決できた / できなかった」を定量計測し、ナレッジの穴を特定します。導入して終わりになりがちなチャットボットを、データに基づいて育て続けるための分析基盤です。',
+      price: '¥35,000', per: '/月',
+      category: 'PoC検証',
+      features: ['解決率・エスカレーション率の計測', '未解決トピックの自動クラスタリング', 'ナレッジ改善の優先度提案', '週次サマリーレポート配信']
+    },
+    {
+      id: 'agent-workbench',
+      icon: 'board',
+      name: 'Agent Workbench',
+      desc: '業務エージェントの構築・運用ダッシュボード。ツール接続と実行ログを一箇所で管理できます。',
+      fullDesc: '社内業務を任せるAIエージェントの構築から運用までを一つの画面で。ツール接続の管理、実行ログの追跡、失敗時のリトライ制御まで、エージェント運用に必要な足回りをまとめて提供します。',
+      price: '¥88,000', per: '/月',
+      category: 'AIエージェント',
+      features: ['ノーコードのツール接続管理', '実行ログのステップ単位トレース', '失敗時のリトライ・通知制御', '複数エージェントの一元監視', 'コスト・トークン使用量の可視化']
+    },
+    {
+      id: 'api-starter',
+      icon: 'code',
+      name: 'API Starter Kit',
+      desc: 'Claude API連携の実装テンプレート集。認証・レート制御・構造化出力まで、初日から本番品質で。',
+      fullDesc: 'Claude APIを本番投入する際に必ず必要になる実装パターンを、動くコードとして提供します。認証・レート制御・構造化出力・エラーハンドリングを網羅し、検証開始から本番リリースまでの期間を短縮します。',
+      price: '¥29,800', per: '買い切り',
+      category: 'API連携',
+      features: ['認証・キー管理のベストプラクティス', 'レート制御・リトライ実装', '構造化出力のスキーマ設計例', 'ストリーミング応答の実装例', '導入サポート(30日)付き']
+    }
+  ];
+
+  /* ==================== Product grid rendering ==================== */
+  var grid = document.getElementById('product-grid');
+
+  function renderSkeleton(container, count) {
+    container.setAttribute('aria-busy', 'true');
+    var html = '';
+    for (var i = 0; i < count; i++) {
+      html +=
+        '<div class="card skeleton" aria-hidden="true">' +
+          '<div class="skel skel-icon"></div>' +
+          '<div class="skel skel-title"></div>' +
+          '<div class="skel skel-line"></div>' +
+          '<div class="skel skel-line"></div>' +
+          '<div class="skel skel-line short"></div>' +
+          '<div class="skel-foot">' +
+            '<div class="skel skel-price"></div>' +
+            '<div class="skel skel-link"></div>' +
+          '</div>' +
+        '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  function renderProducts(container, products) {
+    var html = '';
+    products.forEach(function (p) {
+      html +=
+        '<button class="card" type="button" data-id="' + p.id + '">' +
+          '<span class="card-icon" aria-hidden="true">' + ICONS[p.icon] + '</span>' +
+          '<h3>' + p.name + '</h3>' +
+          '<p class="desc">' + p.desc + '</p>' +
+          '<span class="card-foot">' +
+            '<span class="price">' + p.price + '<span class="per">' + p.per + '</span></span>' +
+            '<span class="card-link">詳細を見る →</span>' +
+          '</span>' +
+        '</button>';
+    });
+    container.innerHTML = html;
+    container.setAttribute('aria-busy', 'false');
+    container.querySelectorAll('.card[data-id]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        openModal(card.getAttribute('data-id'), card);
+      });
+    });
+  }
+
+  // 現状はダミーデータ。API取得に差し替える際は fetch → renderProducts に置換。
+  renderSkeleton(grid, 6);
+  setTimeout(function () {
+    renderProducts(grid, PRODUCTS);
+  }, 700);
+
+  /* ==================== Modal ==================== */
+  var overlay = document.getElementById('modal-overlay');
+  var modalClose = document.getElementById('modal-close');
+  var modalCta = document.getElementById('modal-cta');
+  var lastFocused = null;
+  var currentProduct = null;
+
+  function openModal(id, trigger) {
+    var p = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].id === id) { p = PRODUCTS[i]; break; }
+    }
+    if (!p) return;
+    currentProduct = p;
+    lastFocused = trigger || document.activeElement;
+
+    document.getElementById('modal-icon').innerHTML = ICONS[p.icon];
+    document.getElementById('modal-title').textContent = p.name;
+    document.getElementById('modal-cat').textContent = p.category;
+    document.getElementById('modal-desc').textContent = p.fullDesc;
+    document.getElementById('modal-price').innerHTML =
+      p.price + '<span class="per">' + p.per + '</span>';
+    var feat = document.getElementById('modal-features');
+    feat.innerHTML = '';
+    p.features.forEach(function (f) {
+      var li = document.createElement('li');
+      li.textContent = f;
+      feat.appendChild(li);
+    });
+
+    overlay.classList.add('open');
+    document.body.classList.add('modal-open');
+    modalClose.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+    currentProduct = null;
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+
+  // 「導入相談する」→ Servicesへスクロール + 該当カテゴリタグを選択
+  modalCta.addEventListener('click', function () {
+    var category = currentProduct ? currentProduct.category : null;
+    closeModal();
+    if (category) selectCategory(category);
+    var target = document.getElementById('services');
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  /* ==================== Category tags ==================== */
+  var tags = Array.prototype.slice.call(document.querySelectorAll('.tag'));
+
+  tags.forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      var pressed = tag.getAttribute('aria-pressed') === 'true';
+      tag.setAttribute('aria-pressed', String(!pressed));
+    });
+  });
+
+  function selectCategory(name) {
+    tags.forEach(function (tag) {
+      tag.setAttribute('aria-pressed', String(tag.textContent.trim() === name));
+    });
+  }
+
+  /* ==================== Form validation & submit ==================== */
+  var form = document.getElementById('contact');
+  var successBox = document.getElementById('form-success');
+
+  function setInvalid(fieldName, invalid) {
+    var field = form.querySelector('[data-field="' + fieldName + '"]');
+    if (field) field.classList.toggle('invalid', invalid);
+    return invalid;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var name = document.getElementById('f-name');
+    var email = document.getElementById('f-email');
+    var detail = document.getElementById('f-detail');
+
+    var nameBad = setInvalid('name', name.value.trim() === '');
+    var emailBad = setInvalid('email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
+    var detailBad = setInvalid('detail', detail.value.trim() === '');
+
+    if (nameBad || emailBad || detailBad) {
+      var firstBad = form.querySelector('.field.invalid input, .field.invalid textarea');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+
+    // 実送信は行わない(見た目の状態遷移のみ)
+    form.classList.add('hidden');
+    successBox.classList.add('show');
+    successBox.focus();
+  });
+
+  // 入力し直したらエラー表示を解除
+  ['f-name', 'f-email', 'f-detail'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.addEventListener('input', function () {
+      var field = el.closest('.field');
+      if (field) field.classList.remove('invalid');
+    });
+  });
+
+  document.getElementById('form-reset').addEventListener('click', function () {
+    form.reset();
+    form.classList.remove('hidden');
+    successBox.classList.remove('show');
+    var first = document.getElementById('f-name');
+    if (first) first.focus();
+  });
+
+  /* ==================== Mobile menu ==================== */
+  var navToggle = document.querySelector('.nav-toggle');
+  var mobileMenu = document.getElementById('mobile-menu');
+
+  navToggle.addEventListener('click', function () {
+    var open = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!open));
+    navToggle.setAttribute('aria-label', open ? 'メニューを開く' : 'メニューを閉じる');
+    mobileMenu.classList.toggle('open', !open);
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'メニューを開く');
+      mobileMenu.classList.remove('open');
+    });
+  });
+
+  /* ==================== Scroll spy ==================== */
+  var spySections = ['products', 'services', 'about'].map(function (id) {
+    return document.getElementById(id);
+  });
+  var spyLinks = Array.prototype.slice.call(document.querySelectorAll('[data-spy]'));
+  var spyTicking = false;
+
+  function updateSpy() {
+    spyTicking = false;
+    var offset = window.scrollY + 120; // sticky header + 余裕分
+    var active = null;
+    spySections.forEach(function (sec) {
+      if (sec && sec.offsetTop <= offset) active = sec.id;
+    });
+    // ページ末尾ではAboutを確実にアクティブに
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 4) {
+      active = 'about';
+    }
+    spyLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('data-spy') === active);
+    });
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!spyTicking) {
+      spyTicking = true;
+      window.requestAnimationFrame(updateSpy);
+    }
+  }, { passive: true });
+  updateSpy();
+</script>
+</body>
+</html>
