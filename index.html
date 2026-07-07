@@ -749,12 +749,12 @@
           <h3>開発を依頼する</h3>
           <p>AIエージェント構築、RAG基盤、業務自動化、API連携——小さなPoCから本番運用まで、段階に合わせてご提案します。まずは課題をお聞かせください。</p>
           <div class="tags" role="group" aria-label="依頼カテゴリ(1つ選択)">
-            <button class="tag" type="button" aria-pressed="true">AIエージェント</button>
-            <button class="tag" type="button" aria-pressed="false">RAG / 検索基盤</button>
-            <button class="tag" type="button" aria-pressed="false">業務自動化</button>
-            <button class="tag" type="button" aria-pressed="false">API連携</button>
-            <button class="tag" type="button" aria-pressed="false">PoC検証</button>
-            <button class="tag" type="button" aria-pressed="false">その他</button>
+            <button class="tag" type="button" data-category="agent" aria-pressed="true">AIエージェント</button>
+            <button class="tag" type="button" data-category="rag" aria-pressed="false">RAG / 検索基盤</button>
+            <button class="tag" type="button" data-category="automation" aria-pressed="false">業務自動化</button>
+            <button class="tag" type="button" data-category="api" aria-pressed="false">API連携</button>
+            <button class="tag" type="button" data-category="poc" aria-pressed="false">PoC検証</button>
+            <button class="tag" type="button" data-category="other" aria-pressed="false">その他</button>
           </div>
           <p class="services-note">通常2営業日以内にご返信します。秘密保持契約(NDA)の締結にも対応しています。</p>
         </div>
@@ -763,7 +763,7 @@
             <div class="field" data-field="name">
               <label for="f-name">お名前<span class="req">*</span></label>
               <input id="f-name" type="text" placeholder="山田 太郎" autocomplete="name">
-              <p class="err-msg">お名前を入力してください。</p>
+              <p class="err-msg" id="err-name">お名前を入力してください。</p>
             </div>
             <div class="field">
               <label for="f-company">会社名</label>
@@ -773,7 +773,7 @@
           <div class="field" data-field="email">
             <label for="f-email">メールアドレス<span class="req">*</span></label>
             <input id="f-email" type="email" placeholder="you@example.co.jp" autocomplete="email">
-            <p class="err-msg">有効なメールアドレスを入力してください。</p>
+            <p class="err-msg" id="err-email">有効なメールアドレスを入力してください。</p>
           </div>
           <div class="field">
             <label for="f-budget">ご予算の目安</label>
@@ -788,7 +788,7 @@
           <div class="field" data-field="detail">
             <label for="f-detail">ご相談内容<span class="req">*</span></label>
             <textarea id="f-detail" placeholder="解決したい課題や、想定しているスケジュールをお書きください。"></textarea>
-            <p class="err-msg">ご相談内容を入力してください。</p>
+            <p class="err-msg" id="err-detail">ご相談内容を入力してください。</p>
           </div>
           <div class="form-foot">
             <span class="hint">送信いただいた内容は相談目的以外には使用しません。</span>
@@ -914,6 +914,7 @@
       desc: '請求書PDFをAIが構造化データへ自動変換。会計システム連携まで見据えた抽出精度を、経理の現場基準で。',
       fullDesc: '毎月届く形式バラバラの請求書PDFを、勘定科目・税区分まで揃った構造化データに自動変換します。人の目によるダブルチェックを前提とした確信度スコア付きで、経理業務の締め作業を大幅に短縮します。',
       price: '¥48,000', per: '/月',
+      categoryId: 'automation',
       category: '業務自動化',
       features: ['多様な請求書レイアウトの自動認識', '項目ごとの確信度スコア表示', '会計システム向けCSV / API出力', '仕訳ルールの学習・カスタマイズ', '処理履歴の監査ログ']
     },
@@ -924,6 +925,7 @@
       desc: '建設業向け契約書レビュー支援。リスク条項の検出と修正提案を、監査ログ付きで安全に運用できます。',
       fullDesc: '建設業の契約実務に特化したレビューエンジンが、不利な条項・欠落しがちな条項を検出し、修正文案まで提案します。すべてのレビュー実行が監査ログとして残るため、社内統制の要件にもそのまま対応できます。',
       price: '¥120,000', per: '/月',
+      categoryId: 'agent',
       category: 'AIエージェント',
       features: ['建設業特化のリスク条項検出', '修正文案の自動提案', 'レビュー実行の完全な監査ログ', '社内ひな形との差分比較', '弁護士レビュー連携ワークフロー']
     },
@@ -934,6 +936,7 @@
       desc: '社内ドキュメントを横断検索できるRAG基盤。根拠付きの回答で、ナレッジの属人化を解消します。',
       fullDesc: '規程・議事録・技術資料など社内に散らばるドキュメントを一元インデックス化し、自然文の質問に根拠リンク付きで回答します。「どこに書いてあるか分からない」を解消し、ベテランの知見を組織の資産に変えます。',
       price: '¥68,000', per: '/月',
+      categoryId: 'rag',
       category: 'RAG / 検索基盤',
       features: ['複数ソースの横断インデックス', '根拠箇所へのリンク付き回答', '回答品質メトリクスの計測', 'アクセス権限に応じた検索制御', 'Slack / Teams連携']
     },
@@ -944,6 +947,7 @@
       desc: '問い合わせ自動応答の解決率を可視化。AIが答えた・答えられなかったを計測し、改善サイクルを回せます。',
       fullDesc: 'AI自動応答の「解決できた / できなかった」を定量計測し、ナレッジの穴を特定します。導入して終わりになりがちなチャットボットを、データに基づいて育て続けるための分析基盤です。',
       price: '¥35,000', per: '/月',
+      categoryId: 'poc',
       category: 'PoC検証',
       features: ['解決率・エスカレーション率の計測', '未解決トピックの自動クラスタリング', 'ナレッジ改善の優先度提案', '週次サマリーレポート配信']
     },
@@ -954,6 +958,7 @@
       desc: '業務エージェントの構築・運用ダッシュボード。ツール接続と実行ログを一箇所で管理できます。',
       fullDesc: '社内業務を任せるAIエージェントの構築から運用までを一つの画面で。ツール接続の管理、実行ログの追跡、失敗時のリトライ制御まで、エージェント運用に必要な足回りをまとめて提供します。',
       price: '¥88,000', per: '/月',
+      categoryId: 'agent',
       category: 'AIエージェント',
       features: ['ノーコードのツール接続管理', '実行ログのステップ単位トレース', '失敗時のリトライ・通知制御', '複数エージェントの一元監視', 'コスト・トークン使用量の可視化']
     },
@@ -964,6 +969,7 @@
       desc: 'Claude API連携の実装テンプレート集。認証・レート制御・構造化出力まで、初日から本番品質で。',
       fullDesc: 'Claude APIを本番投入する際に必ず必要になる実装パターンを、動くコードとして提供します。認証・レート制御・構造化出力・エラーハンドリングを網羅し、検証開始から本番リリースまでの期間を短縮します。',
       price: '¥29,800', per: '買い切り',
+      categoryId: 'api',
       category: 'API連携',
       features: ['認証・キー管理のベストプラクティス', 'レート制御・リトライ実装', '構造化出力のスキーマ設計例', 'ストリーミング応答の実装例', '導入サポート(30日)付き']
     }
@@ -1035,11 +1041,10 @@
     container.setAttribute('aria-busy', 'false');
   }
 
-  // 現状はダミーデータ。API取得に差し替える際は fetch → renderProducts に置換。
-  renderSkeleton(grid, 6);
-  setTimeout(function () {
-    renderProducts(grid, PRODUCTS);
-  }, 700);
+  // データはローカルの PRODUCTS なので即時描画する。
+  // API接続時は renderSkeleton(grid, n) → fetch → renderProducts(grid, data) の順に差し替える
+  // (renderSkeleton とスケルトンCSSはそのために温存している)。
+  renderProducts(grid, PRODUCTS);
 
   /* ==================== Modal ==================== */
   var overlay = document.getElementById('modal-overlay');
@@ -1133,9 +1138,9 @@
 
   // 「導入相談する」→ Servicesへスクロール + 該当カテゴリタグを選択
   modalCta.addEventListener('click', function () {
-    var category = currentProduct ? currentProduct.category : null;
+    var categoryId = currentProduct ? currentProduct.categoryId : null;
     closeModal();
-    if (category) selectCategory(category);
+    if (categoryId) selectCategory(categoryId);
     var target = document.getElementById('services');
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
@@ -1153,9 +1158,10 @@
     });
   });
 
-  function selectCategory(name) {
+  // 照合は data-category のIDで行う(表示文言が変わっても連携が壊れないように)
+  function selectCategory(categoryId) {
     tags.forEach(function (tag) {
-      tag.setAttribute('aria-pressed', String(tag.textContent.trim() === name));
+      tag.setAttribute('aria-pressed', String(tag.getAttribute('data-category') === categoryId));
     });
   }
 
@@ -1163,9 +1169,22 @@
   var form = document.getElementById('contact');
   var successBox = document.getElementById('form-success');
 
+  // 見た目(.invalid)と支援技術向け(aria-invalid / aria-describedby)を必ず同時に切り替える。
+  // aria-describedby はエラー表示中のみ付与する(非表示の err-msg を参照させたままにしない)。
   function setInvalid(fieldName, invalid) {
     var field = form.querySelector('[data-field="' + fieldName + '"]');
-    if (field) field.classList.toggle('invalid', invalid);
+    if (!field) return invalid;
+    field.classList.toggle('invalid', invalid);
+    var input = field.querySelector('input, textarea');
+    var msg = field.querySelector('.err-msg');
+    if (input) {
+      input.setAttribute('aria-invalid', String(invalid));
+      if (invalid && msg && msg.id) {
+        input.setAttribute('aria-describedby', msg.id);
+      } else {
+        input.removeAttribute('aria-describedby');
+      }
+    }
     return invalid;
   }
 
@@ -1198,12 +1217,14 @@
     successBox.focus();
   });
 
-  // 入力し直したらエラー表示を解除
+  // 入力し直したらエラー表示を解除(aria属性も含めて setInvalid 経由で戻す)
   ['f-name', 'f-email', 'f-detail'].forEach(function (id) {
-    var el = document.getElementById(id);
-    el.addEventListener('input', function () {
-      var field = el.closest('.field');
-      if (field) field.classList.remove('invalid');
+    var input = document.getElementById(id);
+    input.addEventListener('input', function () {
+      var field = input.closest('.field');
+      if (field && field.classList.contains('invalid')) {
+        setInvalid(field.getAttribute('data-field'), false);
+      }
     });
   });
 
