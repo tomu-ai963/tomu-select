@@ -1048,6 +1048,21 @@
   var lastFocused = null;
   var currentProduct = null;
 
+  // モーダル表示中は背景ツリーを inert 化してフォーカス・支援技術の対象から外す
+  function setBackgroundInert(on) {
+    ['.nav', 'main', '.footer'].forEach(function (sel) {
+      var node = document.querySelector(sel);
+      if (!node) return;
+      if (on) {
+        node.setAttribute('inert', '');
+        node.setAttribute('aria-hidden', 'true');
+      } else {
+        node.removeAttribute('inert');
+        node.removeAttribute('aria-hidden');
+      }
+    });
+  }
+
   function openModal(id, trigger) {
     var p = null;
     for (var i = 0; i < PRODUCTS.length; i++) {
@@ -1072,12 +1087,14 @@
 
     overlay.classList.add('open');
     document.body.classList.add('modal-open');
+    setBackgroundInert(true);
     modalClose.focus();
   }
 
   function closeModal() {
     overlay.classList.remove('open');
     document.body.classList.remove('modal-open');
+    setBackgroundInert(false); // フォーカスを戻す前に inert 解除が必須
     if (lastFocused && lastFocused.focus) lastFocused.focus();
     currentProduct = null;
   }
@@ -1092,21 +1109,25 @@
       closeModal();
       return;
     }
-    // フォーカストラップ: Tab / Shift+Tab をモーダル内でループさせる
+    // フォーカストラップ: Tab は常に preventDefault し、移動先をここで完全に管理する。
+    // ブラウザのデフォルトTab移動には一切頼らない(モーダル外・ブラウザUIへの脱出を防ぐ)。
     if (e.key === 'Tab') {
-      var focusables = overlay.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      e.preventDefault();
+      var focusables = Array.prototype.filter.call(
+        overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
+        function (node) {
+          return !node.disabled && node.getClientRects().length > 0;
+        }
       );
       if (!focusables.length) return;
-      var first = focusables[0];
-      var last = focusables[focusables.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
-        e.preventDefault();
-        first.focus();
+      var idx = focusables.indexOf(document.activeElement);
+      var next;
+      if (e.shiftKey) {
+        next = idx <= 0 ? focusables[focusables.length - 1] : focusables[idx - 1];
+      } else {
+        next = (idx === -1 || idx === focusables.length - 1) ? focusables[0] : focusables[idx + 1];
       }
+      next.focus();
     }
   });
 
