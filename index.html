@@ -748,7 +748,7 @@
         <div class="services-info">
           <h3>開発を依頼する</h3>
           <p>AIエージェント構築、RAG基盤、業務自動化、API連携——小さなPoCから本番運用まで、段階に合わせてご提案します。まずは課題をお聞かせください。</p>
-          <div class="tags" role="group" aria-label="依頼カテゴリ">
+          <div class="tags" role="group" aria-label="依頼カテゴリ(1つ選択)">
             <button class="tag" type="button" aria-pressed="true">AIエージェント</button>
             <button class="tag" type="button" aria-pressed="false">RAG / 検索基盤</button>
             <button class="tag" type="button" aria-pressed="false">業務自動化</button>
@@ -992,27 +992,47 @@
     container.innerHTML = html;
   }
 
+  // 外部データがそのまま流れても安全なよう、テキストはすべて textContent で挿入する。
+  // innerHTML を使うのはローカル定義の ICONS マップの値のみ(外部データは鍵としてのみ使用)。
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function setIcon(target, iconKey) {
+    target.innerHTML = Object.prototype.hasOwnProperty.call(ICONS, iconKey) ? ICONS[iconKey] : '';
+  }
+
   function renderProducts(container, products) {
-    var html = '';
+    container.innerHTML = '';
     products.forEach(function (p) {
-      html +=
-        '<button class="card" type="button" data-id="' + p.id + '">' +
-          '<span class="card-icon" aria-hidden="true">' + ICONS[p.icon] + '</span>' +
-          '<h3>' + p.name + '</h3>' +
-          '<p class="desc">' + p.desc + '</p>' +
-          '<span class="card-foot">' +
-            '<span class="price">' + p.price + '<span class="per">' + p.per + '</span></span>' +
-            '<span class="card-link">詳細を見る →</span>' +
-          '</span>' +
-        '</button>';
-    });
-    container.innerHTML = html;
-    container.setAttribute('aria-busy', 'false');
-    container.querySelectorAll('.card[data-id]').forEach(function (card) {
+      var card = el('button', 'card');
+      card.type = 'button';
+      card.setAttribute('data-id', p.id);
+
+      var icon = el('span', 'card-icon');
+      icon.setAttribute('aria-hidden', 'true');
+      setIcon(icon, p.icon);
+      card.appendChild(icon);
+
+      card.appendChild(el('h3', null, p.name));
+      card.appendChild(el('p', 'desc', p.desc));
+
+      var foot = el('span', 'card-foot');
+      var price = el('span', 'price', p.price);
+      price.appendChild(el('span', 'per', p.per));
+      foot.appendChild(price);
+      foot.appendChild(el('span', 'card-link', '詳細を見る →'));
+      card.appendChild(foot);
+
       card.addEventListener('click', function () {
-        openModal(card.getAttribute('data-id'), card);
+        openModal(p.id, card);
       });
+      container.appendChild(card);
     });
+    container.setAttribute('aria-busy', 'false');
   }
 
   // 現状はダミーデータ。API取得に差し替える際は fetch → renderProducts に置換。
@@ -1037,18 +1057,17 @@
     currentProduct = p;
     lastFocused = trigger || document.activeElement;
 
-    document.getElementById('modal-icon').innerHTML = ICONS[p.icon];
+    setIcon(document.getElementById('modal-icon'), p.icon);
     document.getElementById('modal-title').textContent = p.name;
     document.getElementById('modal-cat').textContent = p.category;
     document.getElementById('modal-desc').textContent = p.fullDesc;
-    document.getElementById('modal-price').innerHTML =
-      p.price + '<span class="per">' + p.per + '</span>';
+    var priceEl = document.getElementById('modal-price');
+    priceEl.textContent = p.price;
+    priceEl.appendChild(el('span', 'per', p.per));
     var feat = document.getElementById('modal-features');
     feat.innerHTML = '';
     p.features.forEach(function (f) {
-      var li = document.createElement('li');
-      li.textContent = f;
-      feat.appendChild(li);
+      feat.appendChild(el('li', null, f));
     });
 
     overlay.classList.add('open');
@@ -1068,7 +1087,27 @@
     if (e.target === overlay) closeModal();
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+    // フォーカストラップ: Tab / Shift+Tab をモーダル内でループさせる
+    if (e.key === 'Tab') {
+      var focusables = overlay.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   });
 
   // 「導入相談する」→ Servicesへスクロール + 該当カテゴリタグを選択
@@ -1081,12 +1120,15 @@
   });
 
   /* ==================== Category tags ==================== */
+  // 単一選択に統一(モーダル経由の selectCategory と同じ挙動)。
+  // 選択中のタグをもう一度クリックすると未選択に戻せる。
   var tags = Array.prototype.slice.call(document.querySelectorAll('.tag'));
 
   tags.forEach(function (tag) {
     tag.addEventListener('click', function () {
-      var pressed = tag.getAttribute('aria-pressed') === 'true';
-      tag.setAttribute('aria-pressed', String(!pressed));
+      var wasPressed = tag.getAttribute('aria-pressed') === 'true';
+      tags.forEach(function (t) { t.setAttribute('aria-pressed', 'false'); });
+      if (!wasPressed) tag.setAttribute('aria-pressed', 'true');
     });
   });
 
@@ -1113,8 +1155,14 @@
     var email = document.getElementById('f-email');
     var detail = document.getElementById('f-detail');
 
+    // メールはネイティブバリデーション(type="email")と正規表現の両方を通す。
+    // ラベル部は英数字で開始・終了し、TLDは2文字以上を要求。
+    var emailVal = email.value.trim();
+    var emailOk = email.validity.valid &&
+      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/.test(emailVal);
+
     var nameBad = setInvalid('name', name.value.trim() === '');
-    var emailBad = setInvalid('email', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
+    var emailBad = setInvalid('email', !emailOk);
     var detailBad = setInvalid('detail', detail.value.trim() === '');
 
     if (nameBad || emailBad || detailBad) {
