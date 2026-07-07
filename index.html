@@ -490,10 +490,18 @@
     font-family: inherit;
     transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
   }
-  .tag:hover, .tag[aria-pressed="true"] {
+  .tag[aria-pressed="true"] {
     border-color: var(--gold);
     color: var(--gold-deep);
     background: var(--gold-wash);
+  }
+  /* hover はポインタ対応デバイスのみ・選択状態(背景あり)より控えめに。
+     タッチデバイスでのhover残留による「選択済みに見える」誤認を防ぐ */
+  @media (hover: hover) {
+    .tag:hover {
+      border-color: var(--gold);
+      color: var(--gold-deep);
+    }
   }
   .services-note {
     margin-top: auto;
@@ -584,6 +592,15 @@
   }
   .link-reset:hover { color: var(--ink); }
 
+  /* ---------- About ---------- */
+  .about { text-align: center; }
+  .about-lead {
+    max-width: 38em;
+    margin: 0 auto;
+    color: var(--muted);
+    text-wrap: balance;
+  }
+
   /* ---------- Footer ---------- */
   .footer {
     border-top: 1px solid var(--hairline);
@@ -657,7 +674,7 @@
 </head>
 <body>
 
-<header class="nav">
+<header class="nav" data-inert-target>
   <div class="container nav-inner">
     <a class="logo" href="#top">tomu select<span class="dot" aria-hidden="true"></span></a>
     <nav class="nav-links" aria-label="メインナビゲーション">
@@ -685,7 +702,7 @@
   </nav>
 </header>
 
-<main id="top">
+<main id="top" data-inert-target>
   <!-- Hero -->
   <section class="hero container">
     <p class="eyebrow">AI Products &amp; Development</p>
@@ -783,10 +800,10 @@
   </section>
 
   <!-- About strip -->
-  <section class="section" id="about">
-    <div class="container" style="text-align: center;">
+  <section class="section about" id="about">
+    <div class="container">
       <p class="eyebrow">About</p>
-      <p style="max-width: 38em; margin: 0 auto; color: var(--muted); text-wrap: balance;">
+      <p class="about-lead">
         tomu select は、自社プロダクトの開発・運用で得た知見をもとに、実務で機能するAIツールだけを選んで提供するプラットフォームです。売って終わりではなく、導入後の運用まで並走します。
       </p>
     </div>
@@ -816,7 +833,7 @@
   </div>
 </div>
 
-<footer class="footer">
+<footer class="footer" data-inert-target>
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
@@ -825,12 +842,8 @@
       </div>
       <div>
         <h4>Products</h4>
-        <ul>
-          <li><a href="#products">AP Invoice Reader</a></li>
-          <li><a href="#products">Contract Review AI</a></li>
-          <li><a href="#products">Knowledge RAG</a></li>
-          <li><a href="#products">すべて見る</a></li>
-        </ul>
+        <!-- 商品リンクは PRODUCTS 配列からJSで生成する(手動メンテの重複を持たない) -->
+        <ul id="footer-product-links"></ul>
       </div>
       <div>
         <h4>Services</h4>
@@ -869,8 +882,8 @@
 
   /* ==================== Product data ====================
      将来的にAPI取得へ差し替える前提。
-     取得中: renderSkeleton(grid, n) → 取得後: renderProducts(grid, data) */
-  var ICONS = {
+     取得中: renderSkeleton(grid) → 取得後: renderProducts(grid, data) */
+  const ICONS = {
     invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
     shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z"/><path d="M9.5 12l2 2 3.5-4"/></svg>',
     search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/><path d="M11 8.5v5M8.5 11h5"/></svg>',
@@ -879,7 +892,7 @@
     code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-4 5 4 5M16 7l4 5-4 5"/><path d="M13.5 5l-3 14"/></svg>'
   };
 
-  var PRODUCTS = [
+  const PRODUCTS = [
     {
       id: 'ap-invoice',
       icon: 'invoice',
@@ -949,19 +962,19 @@
   ];
 
   /* ==================== Product grid rendering ==================== */
-  var grid = document.getElementById('product-grid');
-  var gridStatus = document.getElementById('grid-status');
+  const grid = document.getElementById('product-grid');
+  const gridStatus = document.getElementById('grid-status');
 
   // 読み上げ用のstatus要素(視覚非表示)にだけ通知を出す。グリッド本体はaria-busyのみ。
   function announceGridStatus(message) {
     if (gridStatus) gridStatus.textContent = message;
   }
 
-  function renderSkeleton(container, count) {
+  function renderSkeleton(container, count = PRODUCTS.length) {
     container.setAttribute('aria-busy', 'true');
     announceGridStatus('商品を読み込んでいます…');
-    var html = '';
-    for (var i = 0; i < count; i++) {
+    let html = '';
+    for (let i = 0; i < count; i++) {
       html +=
         '<div class="card skeleton" aria-hidden="true">' +
           '<div class="skel skel-icon"></div>' +
@@ -981,7 +994,7 @@
   // 外部データがそのまま流れても安全なよう、テキストはすべて textContent で挿入する。
   // innerHTML を使うのはローカル定義の ICONS マップの値のみ(外部データは鍵としてのみ使用)。
   function el(tag, className, text) {
-    var node = document.createElement(tag);
+    const node = document.createElement(tag);
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
@@ -993,12 +1006,12 @@
 
   function renderProducts(container, products) {
     container.innerHTML = '';
-    products.forEach(function (p) {
-      var card = el('button', 'card');
+    products.forEach((p) => {
+      const card = el('button', 'card');
       card.type = 'button';
       card.setAttribute('data-id', p.id);
 
-      var icon = el('span', 'card-icon');
+      const icon = el('span', 'card-icon');
       icon.setAttribute('aria-hidden', 'true');
       setIcon(icon, p.icon);
       card.appendChild(icon);
@@ -1006,8 +1019,8 @@
       card.appendChild(el('span', 'card-title', p.name));
       card.appendChild(el('span', 'desc', p.desc));
 
-      var foot = el('span', 'card-foot');
-      var price = el('span', 'price', p.price);
+      const foot = el('span', 'card-foot');
+      const price = el('span', 'price', p.price);
       price.appendChild(el('span', 'per', p.per));
       foot.appendChild(price);
       foot.appendChild(el('span', 'card-link', '詳細を見る →'));
@@ -1016,33 +1029,46 @@
       container.appendChild(card);
     });
     container.setAttribute('aria-busy', 'false');
-    announceGridStatus(products.length + '件の商品を表示しました');
+    announceGridStatus(`${products.length}件の商品を表示しました`);
   }
 
   // クリックはグリッドへのイベント委譲1本で処理する
   // (再取得→再レンダリングしてもリスナーの再登録が不要)
-  grid.addEventListener('click', function (e) {
-    var card = e.target.closest('.card[data-id]');
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('.card[data-id]');
     if (card) openModal(card.getAttribute('data-id'), card);
   });
 
   // データはローカルの PRODUCTS なので即時描画する。
-  // API接続時は renderSkeleton(grid, n) → fetch → renderProducts(grid, data) の順に差し替える
+  // API接続時は renderSkeleton(grid) → fetch → renderProducts(grid, data) の順に差し替える
   // (renderSkeleton とスケルトンCSSはそのために温存している)。
   renderProducts(grid, PRODUCTS);
 
-  /* ==================== Modal ==================== */
-  var overlay = document.getElementById('modal-overlay');
-  var modalClose = document.getElementById('modal-close');
-  var modalCta = document.getElementById('modal-cta');
-  var lastFocused = null;
-  var currentProduct = null;
+  /* ==================== Footer product links ==================== */
+  // フッターの商品リンクは PRODUCTS から生成する(HTML側と二重管理しない)
+  const footerProductLinks = document.getElementById('footer-product-links');
+  if (footerProductLinks) {
+    const labels = PRODUCTS.slice(0, 3).map((p) => p.name).concat('すべて見る');
+    labels.forEach((label) => {
+      const item = document.createElement('li');
+      const link = el('a', null, label);
+      link.href = '#products';
+      item.appendChild(link);
+      footerProductLinks.appendChild(item);
+    });
+  }
 
-  // モーダル表示中は背景ツリーを inert 化してフォーカス・支援技術の対象から外す
+  /* ==================== Modal ==================== */
+  const overlay = document.getElementById('modal-overlay');
+  const modalClose = document.getElementById('modal-close');
+  const modalCta = document.getElementById('modal-cta');
+  let lastFocused = null;
+  let currentProduct = null;
+
+  // モーダル表示中は背景ツリーを inert 化してフォーカス・支援技術の対象から外す。
+  // 対象は data-inert-target 属性で指定する(CSSクラス名のリネームに影響されない)。
   function setBackgroundInert(on) {
-    ['.nav', 'main', '.footer'].forEach(function (sel) {
-      var node = document.querySelector(sel);
-      if (!node) return;
+    document.querySelectorAll('[data-inert-target]').forEach((node) => {
       if (on) {
         node.setAttribute('inert', '');
         node.setAttribute('aria-hidden', 'true');
@@ -1054,10 +1080,7 @@
   }
 
   function openModal(id, trigger) {
-    var p = null;
-    for (var i = 0; i < PRODUCTS.length; i++) {
-      if (PRODUCTS[i].id === id) { p = PRODUCTS[i]; break; }
-    }
+    const p = PRODUCTS.find((item) => item.id === id);
     if (!p) return;
     currentProduct = p;
     lastFocused = trigger || document.activeElement;
@@ -1066,14 +1089,12 @@
     document.getElementById('modal-title').textContent = p.name;
     document.getElementById('modal-cat').textContent = p.category;
     document.getElementById('modal-desc').textContent = p.fullDesc;
-    var priceEl = document.getElementById('modal-price');
+    const priceEl = document.getElementById('modal-price');
     priceEl.textContent = p.price;
     priceEl.appendChild(el('span', 'per', p.per));
-    var feat = document.getElementById('modal-features');
+    const feat = document.getElementById('modal-features');
     feat.innerHTML = '';
-    p.features.forEach(function (f) {
-      feat.appendChild(el('li', null, f));
-    });
+    p.features.forEach((f) => feat.appendChild(el('li', null, f)));
 
     overlay.classList.add('is-open');
     document.body.classList.add('is-modal-open');
@@ -1094,16 +1115,16 @@
   // オーバーレイクリックで閉じる判定は mousedown 起点で行う。
   // モーダル内テキストを選択してオーバーレイ上でマウスを離したときに
   // click がオーバーレイで発火して閉じてしまうのを防ぐ。
-  var pressStartedOnOverlay = false;
-  overlay.addEventListener('mousedown', function (e) {
+  let pressStartedOnOverlay = false;
+  overlay.addEventListener('mousedown', (e) => {
     pressStartedOnOverlay = (e.target === overlay);
   });
-  overlay.addEventListener('click', function (e) {
+  overlay.addEventListener('click', (e) => {
     if (e.target === overlay && pressStartedOnOverlay) closeModal();
     pressStartedOnOverlay = false;
   });
 
-  document.addEventListener('keydown', function (e) {
+  document.addEventListener('keydown', (e) => {
     if (!overlay.classList.contains('is-open')) return;
     if (e.key === 'Escape') {
       closeModal();
@@ -1113,15 +1134,12 @@
     // ブラウザのデフォルトTab移動には一切頼らない(モーダル外・ブラウザUIへの脱出を防ぐ)。
     if (e.key === 'Tab') {
       e.preventDefault();
-      var focusables = Array.prototype.filter.call(
-        overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
-        function (node) {
-          return !node.disabled && node.getClientRects().length > 0;
-        }
-      );
+      const focusables = Array.from(
+        overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter((node) => !node.disabled && node.getClientRects().length > 0);
       if (!focusables.length) return;
-      var idx = focusables.indexOf(document.activeElement);
-      var next;
+      const idx = focusables.indexOf(document.activeElement);
+      let next;
       if (e.shiftKey) {
         next = idx <= 0 ? focusables[focusables.length - 1] : focusables[idx - 1];
       } else {
@@ -1132,46 +1150,46 @@
   });
 
   // 「導入相談する」→ Servicesへスクロール + 該当カテゴリタグを選択
-  modalCta.addEventListener('click', function () {
-    var categoryId = currentProduct ? currentProduct.categoryId : null;
+  modalCta.addEventListener('click', () => {
+    const categoryId = currentProduct ? currentProduct.categoryId : null;
     closeModal();
     if (categoryId) selectCategory(categoryId);
-    var target = document.getElementById('services');
+    const target = document.getElementById('services');
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 
   /* ==================== Category tags ==================== */
   // 単一選択に統一(モーダル経由の selectCategory と同じ挙動)。
   // 選択中のタグをもう一度クリックすると未選択に戻せる。
-  var tags = Array.prototype.slice.call(document.querySelectorAll('.tag'));
+  const tags = Array.from(document.querySelectorAll('.tag'));
 
-  tags.forEach(function (tag) {
-    tag.addEventListener('click', function () {
-      var wasPressed = tag.getAttribute('aria-pressed') === 'true';
-      tags.forEach(function (t) { t.setAttribute('aria-pressed', 'false'); });
+  tags.forEach((tag) => {
+    tag.addEventListener('click', () => {
+      const wasPressed = tag.getAttribute('aria-pressed') === 'true';
+      tags.forEach((t) => t.setAttribute('aria-pressed', 'false'));
       if (!wasPressed) tag.setAttribute('aria-pressed', 'true');
     });
   });
 
   // 照合は data-category のIDで行う(表示文言が変わっても連携が壊れないように)
   function selectCategory(categoryId) {
-    tags.forEach(function (tag) {
+    tags.forEach((tag) => {
       tag.setAttribute('aria-pressed', String(tag.getAttribute('data-category') === categoryId));
     });
   }
 
   /* ==================== Form validation & submit ==================== */
-  var form = document.getElementById('contact');
-  var successBox = document.getElementById('form-success');
+  const form = document.getElementById('contact');
+  const successBox = document.getElementById('form-success');
 
   // 見た目(.invalid)と支援技術向け(aria-invalid / aria-describedby)を必ず同時に切り替える。
   // aria-describedby はエラー表示中のみ付与する(非表示の err-msg を参照させたままにしない)。
   function setInvalid(fieldName, invalid) {
-    var field = form.querySelector('[data-field="' + fieldName + '"]');
+    const field = form.querySelector(`[data-field="${fieldName}"]`);
     if (!field) return invalid;
     field.classList.toggle('invalid', invalid);
-    var input = field.querySelector('input, textarea');
-    var msg = field.querySelector('.err-msg');
+    const input = field.querySelector('input, textarea');
+    const msg = field.querySelector('.err-msg');
     if (input) {
       input.setAttribute('aria-invalid', String(invalid));
       if (invalid && msg && msg.id) {
@@ -1183,25 +1201,25 @@
     return invalid;
   }
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    var name = document.getElementById('f-name');
-    var email = document.getElementById('f-email');
-    var detail = document.getElementById('f-detail');
+    const name = document.getElementById('f-name');
+    const email = document.getElementById('f-email');
+    const detail = document.getElementById('f-detail');
 
     // メールはネイティブバリデーション(type="email")と正規表現の両方を通す。
     // ラベル部は英数字で開始・終了し、TLDは2文字以上を要求。
-    var emailVal = email.value.trim();
-    var emailOk = email.validity.valid &&
+    const emailVal = email.value.trim();
+    const emailOk = email.validity.valid &&
       /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/.test(emailVal);
 
-    var nameBad = setInvalid('name', name.value.trim() === '');
-    var emailBad = setInvalid('email', !emailOk);
-    var detailBad = setInvalid('detail', detail.value.trim() === '');
+    const nameBad = setInvalid('name', name.value.trim() === '');
+    const emailBad = setInvalid('email', !emailOk);
+    const detailBad = setInvalid('detail', detail.value.trim() === '');
 
     if (nameBad || emailBad || detailBad) {
-      var firstBad = form.querySelector('.field.invalid input, .field.invalid textarea');
+      const firstBad = form.querySelector('.field.invalid input, .field.invalid textarea');
       if (firstBad) firstBad.focus();
       return;
     }
@@ -1213,37 +1231,37 @@
   });
 
   // 入力し直したらエラー表示を解除(aria属性も含めて setInvalid 経由で戻す)
-  ['f-name', 'f-email', 'f-detail'].forEach(function (id) {
-    var input = document.getElementById(id);
-    input.addEventListener('input', function () {
-      var field = input.closest('.field');
+  ['f-name', 'f-email', 'f-detail'].forEach((id) => {
+    const input = document.getElementById(id);
+    input.addEventListener('input', () => {
+      const field = input.closest('.field');
       if (field && field.classList.contains('invalid')) {
         setInvalid(field.getAttribute('data-field'), false);
       }
     });
   });
 
-  document.getElementById('form-reset').addEventListener('click', function () {
+  document.getElementById('form-reset').addEventListener('click', () => {
     form.reset();
     form.classList.remove('is-hidden');
     successBox.classList.remove('is-open');
-    var first = document.getElementById('f-name');
+    const first = document.getElementById('f-name');
     if (first) first.focus();
   });
 
   /* ==================== Mobile menu ==================== */
-  var navToggle = document.querySelector('.nav-toggle');
-  var mobileMenu = document.getElementById('mobile-menu');
+  const navToggle = document.querySelector('.nav-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
 
-  navToggle.addEventListener('click', function () {
-    var open = navToggle.getAttribute('aria-expanded') === 'true';
-    navToggle.setAttribute('aria-expanded', String(!open));
-    navToggle.setAttribute('aria-label', open ? 'メニューを開く' : 'メニューを閉じる');
-    mobileMenu.classList.toggle('is-open', !open);
+  navToggle.addEventListener('click', () => {
+    const isOpen = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!isOpen));
+    navToggle.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+    mobileMenu.classList.toggle('is-open', !isOpen);
   });
 
-  mobileMenu.querySelectorAll('a').forEach(function (link) {
-    link.addEventListener('click', function () {
+  mobileMenu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
       navToggle.setAttribute('aria-expanded', 'false');
       navToggle.setAttribute('aria-label', 'メニューを開く');
       mobileMenu.classList.remove('is-open');
@@ -1251,20 +1269,18 @@
   });
 
   /* ==================== Scroll spy ==================== */
-  var spySections = ['products', 'services', 'about'].map(function (id) {
-    return document.getElementById(id);
-  });
-  var spyLinks = Array.prototype.slice.call(document.querySelectorAll('[data-spy]'));
-  var spyTicking = false;
+  const spySections = ['products', 'services', 'about'].map((id) => document.getElementById(id));
+  const spyLinks = Array.from(document.querySelectorAll('[data-spy]'));
+  let spyTicking = false;
 
   // セクション位置はキャッシュし、スクロール中はレイアウト読み取りをしない。
   // 再計測は resize / load 時のみ(スクロール毎の offsetTop 読みによるリフロー誘発を回避)。
-  var spyPositions = [];
-  var spyDocHeight = 0;
+  let spyPositions = [];
+  let spyDocHeight = 0;
 
   function measureSpy() {
-    var scrollY = window.scrollY;
-    spyPositions = spySections.map(function (sec) {
+    const scrollY = window.scrollY;
+    spyPositions = spySections.map((sec) => {
       if (!sec) return null;
       return { id: sec.id, top: sec.getBoundingClientRect().top + scrollY };
     });
@@ -1273,16 +1289,16 @@
 
   function updateSpy() {
     spyTicking = false;
-    var offset = window.scrollY + 120; // sticky header + 余裕分
-    var active = null;
-    spyPositions.forEach(function (pos) {
+    const offset = window.scrollY + 120; // sticky header + 余裕分
+    let active = null;
+    spyPositions.forEach((pos) => {
       if (pos && pos.top <= offset) active = pos.id;
     });
     // ページ末尾ではAboutを確実にアクティブに
     if (window.innerHeight + window.scrollY >= spyDocHeight - 4) {
       active = 'about';
     }
-    spyLinks.forEach(function (link) {
+    spyLinks.forEach((link) => {
       link.classList.toggle('active', link.getAttribute('data-spy') === active);
     });
   }
@@ -1295,12 +1311,12 @@
   }
 
   window.addEventListener('scroll', requestSpyUpdate, { passive: true });
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', () => {
     measureSpy();
     requestSpyUpdate();
   });
   // フォント読み込み等で確定後の位置に更新
-  window.addEventListener('load', function () {
+  window.addEventListener('load', () => {
     measureSpy();
     requestSpyUpdate();
   });
