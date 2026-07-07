@@ -5,81 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>tomu select — AI Products & Development Services</title>
 <style>
+  /* テーマトークンは light-dark(ライト値, ダーク値) で一元管理する。
+     OS設定は color-scheme: light dark が自動で追従し、
+     ビューアのテーマトグル(data-theme属性)は color-scheme の強制で上書きする。
+     対応ブラウザ: Chrome 123+ / Firefox 120+ / Safari 17.5+ */
   :root {
-    --bg: #f8f7f4;
-    --surface: #ffffff;
-    --ink: #1c1a16;
-    --muted: #6f6a5e;
-    --faint: #9a9486;
-    --hairline: #e8e5dd;
-    --hairline-strong: #ddd8cc;
-    --gold: #c9a84c;
-    --gold-deep: #a8873a;
-    --gold-wash: rgba(201, 168, 76, 0.08);
-    --error: #b0503c;
-    --skel: #eeece6;
-    --skel-shine: #f6f4ef;
-    --shadow: 0 1px 2px rgba(28, 26, 22, 0.04), 0 4px 16px rgba(28, 26, 22, 0.05);
-    --shadow-lift: 0 2px 4px rgba(28, 26, 22, 0.05), 0 12px 32px rgba(28, 26, 22, 0.09);
-    --shadow-modal: 0 8px 24px rgba(28, 26, 22, 0.12), 0 24px 64px rgba(28, 26, 22, 0.18);
+    color-scheme: light dark;
+    --bg: light-dark(#f8f7f4, #16140f);
+    --surface: light-dark(#ffffff, #1e1c16);
+    --ink: light-dark(#1c1a16, #ece8dd);
+    --muted: light-dark(#6f6a5e, #a59d8b);
+    --faint: light-dark(#9a9486, #7c7565);
+    --hairline: light-dark(#e8e5dd, #2c2920);
+    --hairline-strong: light-dark(#ddd8cc, #3a362a);
+    --gold: light-dark(#c9a84c, #d4b45f);
+    --gold-deep: light-dark(#a8873a, #e0c377);
+    --gold-wash: light-dark(rgba(201, 168, 76, 0.08), rgba(212, 180, 95, 0.09));
+    --error: light-dark(#b0503c, #d4715c);
+    --skel: light-dark(#eeece6, #262319);
+    --skel-shine: light-dark(#f6f4ef, #2e2a1f);
+    --shadow:
+      0 1px 2px light-dark(rgba(28, 26, 22, 0.04), rgba(0, 0, 0, 0.3)),
+      0 4px 16px light-dark(rgba(28, 26, 22, 0.05), rgba(0, 0, 0, 0.25));
+    --shadow-lift:
+      0 2px 4px light-dark(rgba(28, 26, 22, 0.05), rgba(0, 0, 0, 0.35)),
+      0 12px 32px light-dark(rgba(28, 26, 22, 0.09), rgba(0, 0, 0, 0.4));
+    --shadow-modal:
+      0 8px 24px light-dark(rgba(28, 26, 22, 0.12), rgba(0, 0, 0, 0.5)),
+      0 24px 64px light-dark(rgba(28, 26, 22, 0.18), rgba(0, 0, 0, 0.6));
     --radius: 6px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #16140f;
-      --surface: #1e1c16;
-      --ink: #ece8dd;
-      --muted: #a59d8b;
-      --faint: #7c7565;
-      --hairline: #2c2920;
-      --hairline-strong: #3a362a;
-      --gold: #d4b45f;
-      --gold-deep: #e0c377;
-      --gold-wash: rgba(212, 180, 95, 0.09);
-      --error: #d4715c;
-      --skel: #262319;
-      --skel-shine: #2e2a1f;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
-      --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
-      --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.6);
-    }
-  }
-  :root[data-theme="light"] {
-    --bg: #f8f7f4;
-    --surface: #ffffff;
-    --ink: #1c1a16;
-    --muted: #6f6a5e;
-    --faint: #9a9486;
-    --hairline: #e8e5dd;
-    --hairline-strong: #ddd8cc;
-    --gold: #c9a84c;
-    --gold-deep: #a8873a;
-    --gold-wash: rgba(201, 168, 76, 0.08);
-    --error: #b0503c;
-    --skel: #eeece6;
-    --skel-shine: #f6f4ef;
-    --shadow: 0 1px 2px rgba(28, 26, 22, 0.04), 0 4px 16px rgba(28, 26, 22, 0.05);
-    --shadow-lift: 0 2px 4px rgba(28, 26, 22, 0.05), 0 12px 32px rgba(28, 26, 22, 0.09);
-    --shadow-modal: 0 8px 24px rgba(28, 26, 22, 0.12), 0 24px 64px rgba(28, 26, 22, 0.18);
-  }
-  :root[data-theme="dark"] {
-    --bg: #16140f;
-    --surface: #1e1c16;
-    --ink: #ece8dd;
-    --muted: #a59d8b;
-    --faint: #7c7565;
-    --hairline: #2c2920;
-    --hairline-strong: #3a362a;
-    --gold: #d4b45f;
-    --gold-deep: #e0c377;
-    --gold-wash: rgba(212, 180, 95, 0.09);
-    --error: #d4715c;
-    --skel: #262319;
-    --skel-shine: #2e2a1f;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
-    --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
-    --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.6);
-  }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
 
   * { box-sizing: border-box; }
 
@@ -94,7 +51,7 @@
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
-  body.modal-open { overflow: hidden; }
+  body.is-modal-open { overflow: hidden; }
 
   a { color: inherit; text-decoration: none; }
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -106,6 +63,19 @@
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 32px;
+  }
+
+  /* スクリーンリーダー専用テキスト(視覚的には非表示) */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   /* ---------- Navigation ---------- */
@@ -211,7 +181,7 @@
     background: var(--bg);
     padding: 8px 0 20px;
   }
-  .mobile-menu.open { display: block; }
+  .mobile-menu.is-open { display: block; }
   .mobile-menu a {
     display: block;
     padding: 13px 32px;
@@ -320,7 +290,9 @@
     flex-shrink: 0;
   }
   .card-icon svg { width: 20px; height: 20px; }
-  .card h3 {
+  /* button の content model(phrasing content)に合わせ、カード見出しは span で表現する */
+  .card-title {
+    display: block;
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -383,7 +355,7 @@
   .skel-link { width: 64px; height: 12px; }
 
   /* ---------- Modal ---------- */
-  .overlay {
+  .modal-overlay {
     position: fixed;
     inset: 0;
     z-index: 40;
@@ -395,7 +367,7 @@
     justify-content: center;
     padding: 24px;
   }
-  .overlay.open { display: flex; }
+  .modal-overlay.is-open { display: flex; }
   .modal {
     background: var(--surface);
     border: 1px solid var(--hairline);
@@ -585,8 +557,8 @@
     min-height: 420px;
     scroll-margin-top: 84px;
   }
-  .form-success.show { display: flex; }
-  .services-form.hidden { display: none; }
+  .form-success.is-open { display: flex; }
+  .services-form.is-hidden { display: none; }
   .success-mark {
     width: 56px;
     height: 56px;
@@ -733,7 +705,8 @@
         <h2>Products</h2>
         <p class="sub">現場で検証済みのAIプロダクトを、そのまま導入できる形で。</p>
       </div>
-      <div class="grid" id="product-grid" aria-live="polite" aria-busy="true"></div>
+      <div class="grid" id="product-grid" aria-busy="true"></div>
+      <p class="visually-hidden" id="grid-status" role="status" aria-live="polite"></p>
     </div>
   </section>
 
@@ -821,7 +794,7 @@
 </main>
 
 <!-- Product detail modal -->
-<div class="overlay" id="modal-overlay">
+<div class="modal-overlay" id="modal-overlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <button class="modal-close" type="button" id="modal-close" aria-label="閉じる">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
@@ -977,9 +950,16 @@
 
   /* ==================== Product grid rendering ==================== */
   var grid = document.getElementById('product-grid');
+  var gridStatus = document.getElementById('grid-status');
+
+  // 読み上げ用のstatus要素(視覚非表示)にだけ通知を出す。グリッド本体はaria-busyのみ。
+  function announceGridStatus(message) {
+    if (gridStatus) gridStatus.textContent = message;
+  }
 
   function renderSkeleton(container, count) {
     container.setAttribute('aria-busy', 'true');
+    announceGridStatus('商品を読み込んでいます…');
     var html = '';
     for (var i = 0; i < count; i++) {
       html +=
@@ -1023,8 +1003,8 @@
       setIcon(icon, p.icon);
       card.appendChild(icon);
 
-      card.appendChild(el('h3', null, p.name));
-      card.appendChild(el('p', 'desc', p.desc));
+      card.appendChild(el('span', 'card-title', p.name));
+      card.appendChild(el('span', 'desc', p.desc));
 
       var foot = el('span', 'card-foot');
       var price = el('span', 'price', p.price);
@@ -1033,13 +1013,18 @@
       foot.appendChild(el('span', 'card-link', '詳細を見る →'));
       card.appendChild(foot);
 
-      card.addEventListener('click', function () {
-        openModal(p.id, card);
-      });
       container.appendChild(card);
     });
     container.setAttribute('aria-busy', 'false');
+    announceGridStatus(products.length + '件の商品を表示しました');
   }
+
+  // クリックはグリッドへのイベント委譲1本で処理する
+  // (再取得→再レンダリングしてもリスナーの再登録が不要)
+  grid.addEventListener('click', function (e) {
+    var card = e.target.closest('.card[data-id]');
+    if (card) openModal(card.getAttribute('data-id'), card);
+  });
 
   // データはローカルの PRODUCTS なので即時描画する。
   // API接続時は renderSkeleton(grid, n) → fetch → renderProducts(grid, data) の順に差し替える
@@ -1090,26 +1075,36 @@
       feat.appendChild(el('li', null, f));
     });
 
-    overlay.classList.add('open');
-    document.body.classList.add('modal-open');
+    overlay.classList.add('is-open');
+    document.body.classList.add('is-modal-open');
     setBackgroundInert(true);
     modalClose.focus();
   }
 
   function closeModal() {
-    overlay.classList.remove('open');
-    document.body.classList.remove('modal-open');
+    overlay.classList.remove('is-open');
+    document.body.classList.remove('is-modal-open');
     setBackgroundInert(false); // フォーカスを戻す前に inert 解除が必須
     if (lastFocused && lastFocused.focus) lastFocused.focus();
     currentProduct = null;
   }
 
   modalClose.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeModal();
+
+  // オーバーレイクリックで閉じる判定は mousedown 起点で行う。
+  // モーダル内テキストを選択してオーバーレイ上でマウスを離したときに
+  // click がオーバーレイで発火して閉じてしまうのを防ぐ。
+  var pressStartedOnOverlay = false;
+  overlay.addEventListener('mousedown', function (e) {
+    pressStartedOnOverlay = (e.target === overlay);
   });
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay && pressStartedOnOverlay) closeModal();
+    pressStartedOnOverlay = false;
+  });
+
   document.addEventListener('keydown', function (e) {
-    if (!overlay.classList.contains('open')) return;
+    if (!overlay.classList.contains('is-open')) return;
     if (e.key === 'Escape') {
       closeModal();
       return;
@@ -1212,8 +1207,8 @@
     }
 
     // 実送信は行わない(見た目の状態遷移のみ)
-    form.classList.add('hidden');
-    successBox.classList.add('show');
+    form.classList.add('is-hidden');
+    successBox.classList.add('is-open');
     successBox.focus();
   });
 
@@ -1230,8 +1225,8 @@
 
   document.getElementById('form-reset').addEventListener('click', function () {
     form.reset();
-    form.classList.remove('hidden');
-    successBox.classList.remove('show');
+    form.classList.remove('is-hidden');
+    successBox.classList.remove('is-open');
     var first = document.getElementById('f-name');
     if (first) first.focus();
   });
@@ -1244,14 +1239,14 @@
     var open = navToggle.getAttribute('aria-expanded') === 'true';
     navToggle.setAttribute('aria-expanded', String(!open));
     navToggle.setAttribute('aria-label', open ? 'メニューを開く' : 'メニューを閉じる');
-    mobileMenu.classList.toggle('open', !open);
+    mobileMenu.classList.toggle('is-open', !open);
   });
 
   mobileMenu.querySelectorAll('a').forEach(function (link) {
     link.addEventListener('click', function () {
       navToggle.setAttribute('aria-expanded', 'false');
       navToggle.setAttribute('aria-label', 'メニューを開く');
-      mobileMenu.classList.remove('open');
+      mobileMenu.classList.remove('is-open');
     });
   });
 
@@ -1262,15 +1257,29 @@
   var spyLinks = Array.prototype.slice.call(document.querySelectorAll('[data-spy]'));
   var spyTicking = false;
 
+  // セクション位置はキャッシュし、スクロール中はレイアウト読み取りをしない。
+  // 再計測は resize / load 時のみ(スクロール毎の offsetTop 読みによるリフロー誘発を回避)。
+  var spyPositions = [];
+  var spyDocHeight = 0;
+
+  function measureSpy() {
+    var scrollY = window.scrollY;
+    spyPositions = spySections.map(function (sec) {
+      if (!sec) return null;
+      return { id: sec.id, top: sec.getBoundingClientRect().top + scrollY };
+    });
+    spyDocHeight = document.documentElement.scrollHeight;
+  }
+
   function updateSpy() {
     spyTicking = false;
     var offset = window.scrollY + 120; // sticky header + 余裕分
     var active = null;
-    spySections.forEach(function (sec) {
-      if (sec && sec.offsetTop <= offset) active = sec.id;
+    spyPositions.forEach(function (pos) {
+      if (pos && pos.top <= offset) active = pos.id;
     });
     // ページ末尾ではAboutを確実にアクティブに
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 4) {
+    if (window.innerHeight + window.scrollY >= spyDocHeight - 4) {
       active = 'about';
     }
     spyLinks.forEach(function (link) {
@@ -1278,12 +1287,24 @@
     });
   }
 
-  window.addEventListener('scroll', function () {
+  function requestSpyUpdate() {
     if (!spyTicking) {
       spyTicking = true;
       window.requestAnimationFrame(updateSpy);
     }
-  }, { passive: true });
+  }
+
+  window.addEventListener('scroll', requestSpyUpdate, { passive: true });
+  window.addEventListener('resize', function () {
+    measureSpy();
+    requestSpyUpdate();
+  });
+  // フォント読み込み等で確定後の位置に更新
+  window.addEventListener('load', function () {
+    measureSpy();
+    requestSpyUpdate();
+  });
+  measureSpy();
   updateSpy();
 </script>
 </body>
