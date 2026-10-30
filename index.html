@@ -26,6 +26,19 @@
     --gold-soft: light-dark(#f3ead2, #3a3221);
     --gold-ink: light-dark(#5c4a17, #e6cd8a);
     --soon-bg: light-dark(#efede7, #262319);
+    /* 部屋のモチーフ: ウォールナットの家具(基本のアクセント)・天井のレール・暗い床。金は星の光として差し色に残す */
+    --wood: light-dark(#7a5435, #8e6748);
+    --wood-deep: light-dark(#5b3b24, #6a4a32);
+    --wood-ink: light-dark(#5b3b24, #dcbd9b);
+    --wood-soft: light-dark(#f1e8df, #2e241b);
+    --board-top: light-dark(#94694a, #7a5839);
+    --board-bottom: light-dark(#6b4a30, #523a28);
+    --rail: light-dark(#1c1a16, #050403);
+    --window-frame: #1d1b19;
+    --floor: light-dark(#2a2420, #0e0c0a);
+    --floor-ink: #e4ddd2;
+    --floor-muted: #b3a99b;
+    --floor-line: rgba(255, 255, 255, 0.1);
     --error: light-dark(#b0503c, #d4715c);
     --skel: light-dark(#eeece6, #262319);
     --skel-shine: light-dark(#f6f4ef, #2e2a1f);
@@ -91,6 +104,7 @@
     background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    border-top: 3px solid var(--rail); /* 天井のトラックライトのレール */
     border-bottom: 1px solid var(--hairline);
   }
   .nav-inner {
@@ -143,13 +157,13 @@
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     white-space: nowrap;
   }
-  .btn:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; }
+  .btn:hover { background: var(--wood-deep); border-color: var(--wood-deep); color: #fff; }
   .btn-outline {
     background: transparent;
     color: var(--ink);
     border-color: var(--hairline-strong);
   }
-  .btn-outline:hover { border-color: var(--gold); background: var(--gold-wash); color: var(--ink); }
+  .btn-outline:hover { border-color: var(--wood); background: var(--wood-soft); color: var(--ink); }
 
   /* Hamburger */
   .nav-toggle {
@@ -186,25 +200,38 @@
   }
   .mobile-menu .menu-cta { margin: 18px 32px 0; border-bottom: 1px solid var(--hairline-strong); }
 
+  /* ---------- Window (hero) ---------- */
+  /* 部屋の大きな窓。窓の外の天の川は飾りなので CSS の背景にし、読み上げの対象にしない */
+  .window {
+    max-width: 1180px;
+    height: clamp(200px, 27vw, 330px);
+    margin: 32px auto 0;
+    background: #0b1020 url("assets/window-milkyway.webp") 50% 50% / cover no-repeat;
+    border: 6px solid var(--window-frame);
+    box-shadow:
+      inset 0 0 48px rgba(0, 0, 0, 0.45),
+      0 18px 40px -24px light-dark(rgba(28, 26, 22, 0.45), rgba(0, 0, 0, 0.8));
+  }
+
   /* ---------- Hero ---------- */
   .hero {
     text-align: center;
-    padding: 88px 0 64px;
+    padding: 48px 0 56px;
   }
   .eyebrow {
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--gold-ink);
-    margin: 0 0 24px;
+    color: var(--wood-ink);
+    margin: 0 0 20px;
   }
   .hero h1 {
-    font-size: clamp(40px, 7vw, 64px);
+    font-size: clamp(36px, 6vw, 56px);
     font-weight: 300;
     letter-spacing: 0.14em;
     line-height: 1.15;
-    margin: 0 0 24px;
+    margin: 0 0 22px;
     text-wrap: balance;
   }
   .hero h1 strong { font-weight: 600; }
@@ -219,7 +246,7 @@
     width: 48px;
     height: 1px;
     background: var(--gold);
-    margin: 0 auto 36px;
+    margin: 0 auto 28px;
     border: none;
   }
 
@@ -249,7 +276,7 @@
   .tab[aria-selected="true"] {
     color: var(--ink);
     font-weight: 600;
-    border-bottom-color: var(--gold);
+    border-bottom-color: var(--wood);
   }
   .tab-panel[hidden] { display: none; }
   .tab-panel:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; }
@@ -266,7 +293,7 @@
     font-size: 13px;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .shelf-nav a:hover { border-color: var(--gold); background: var(--gold-wash); }
+  .shelf-nav a:hover { border-color: var(--wood); background: var(--wood-soft); }
 
   .shelf-group { scroll-margin-top: 84px; }
   .shelf-group + .shelf-group { margin-top: 56px; }
@@ -284,11 +311,13 @@
   .app-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    gap: 44px 20px; /* 行の間は棚板のぶん広く */
+    padding-bottom: 10px;
   }
 
   /* ---------- App card ---------- */
   .app-card {
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: 12px;
@@ -301,13 +330,29 @@
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .app-card:hover { box-shadow: var(--shadow-lift); border-color: var(--hairline-strong); }
+  /* 棚板: カードの下に敷く木の板。左右に列の間隔の半分(10px)ずつはみ出させ、
+     同じ行のカードの板どうしがつながって1枚の棚に見えるようにする */
+  .app-card::after {
+    content: "";
+    position: absolute;
+    left: -11px;
+    right: -11px;
+    bottom: -11px;
+    height: 10px;
+    background: linear-gradient(var(--board-top), var(--board-bottom));
+    box-shadow: 0 9px 10px -8px rgba(40, 25, 10, 0.45);
+    pointer-events: none;
+    z-index: -1; /* 隣の板と重なる部分のつなぎ目を、カードの下に隠す */
+  }
+  .app-grid { isolation: isolate; }
+  .app-foot { display: flex; flex-direction: column; gap: 14px; }
   .app-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
   .mono {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: var(--gold-soft);
-    color: var(--gold-ink);
+    background: var(--wood-soft);
+    color: var(--wood-ink);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -356,13 +401,13 @@
     font-weight: 500;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   }
-  .app-cta:hover { background: var(--ink); color: var(--bg); }
+  .app-cta:hover { background: var(--wood-deep); border-color: var(--wood-deep); color: #fff; }
 
   .load-error { color: var(--error); font-size: 14px; margin: 0; }
 
   /* ---------- Business panel ---------- */
   .business-note { font-size: 14px; color: var(--muted); margin: 0 0 32px; max-width: 40em; }
-  .business-note a { color: var(--gold-ink); text-decoration: underline; text-underline-offset: 3px; }
+  .business-note a { color: var(--wood-ink); text-decoration: underline; text-underline-offset: 3px; }
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -397,8 +442,8 @@
     place-items: center;
     border: 1px solid var(--hairline-strong);
     border-radius: var(--radius);
-    color: var(--gold-deep);
-    background: var(--gold-wash);
+    color: var(--wood-ink);
+    background: var(--wood-soft);
     flex-shrink: 0;
   }
   .card-icon svg { width: 20px; height: 20px; }
@@ -434,7 +479,7 @@
   .card-link {
     font-size: 12px;
     letter-spacing: 0.1em;
-    color: var(--gold-ink);
+    color: var(--wood-ink);
     transition: color 0.15s ease;
   }
   .card:hover .card-link { color: var(--ink); }
@@ -517,12 +562,12 @@
     display: inline-block;
     font-size: 11px;
     letter-spacing: 0.1em;
-    color: var(--gold-ink);
-    border: 1px solid var(--gold);
+    color: var(--wood-ink);
+    border: 1px solid var(--wood);
     border-radius: 999px;
     padding: 2px 12px;
     margin: 6px 0 18px;
-    background: var(--gold-wash);
+    background: var(--wood-soft);
   }
   .modal-desc { font-size: 14px; color: var(--muted); margin: 0 0 24px; }
   .modal h4 {
@@ -547,8 +592,8 @@
     top: 0.62em;
     width: 8px;
     height: 8px;
-    border-right: 1.5px solid var(--gold-deep);
-    border-bottom: 1.5px solid var(--gold-deep);
+    border-right: 1.5px solid var(--wood);
+    border-bottom: 1.5px solid var(--wood);
     transform: rotate(45deg) translateY(-50%);
   }
   .modal-foot {
@@ -575,11 +620,12 @@
     color: var(--muted);
     text-wrap: balance;
   }
-  .about-lead a { color: var(--gold-ink); text-decoration: underline; text-underline-offset: 3px; }
+  .about-lead a { color: var(--wood-ink); text-decoration: underline; text-underline-offset: 3px; }
 
-  /* ---------- Footer ---------- */
+  /* ---------- Footer (暗い床) ---------- */
   .footer {
-    border-top: 1px solid var(--hairline);
+    background: var(--floor);
+    color: var(--floor-ink);
     padding: 64px 0 40px;
   }
   .footer-grid {
@@ -590,7 +636,7 @@
   }
   .footer-brand p {
     font-size: 13px;
-    color: var(--muted);
+    color: var(--floor-muted);
     margin: 14px 0 0;
     max-width: 22em;
   }
@@ -599,17 +645,17 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--floor-muted);
     margin: 0 0 16px;
   }
   .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-  .footer ul a { font-size: 13px; color: var(--muted); transition: color 0.15s ease; }
-  .footer ul a:hover { color: var(--gold-ink); }
+  .footer ul a { font-size: 13px; color: var(--floor-muted); transition: color 0.15s ease; }
+  .footer ul a:hover { color: #f3e3c4; }
   .footer-bottom {
     padding-top: 28px;
-    border-top: 1px solid var(--hairline);
+    border-top: 1px solid var(--floor-line);
     font-size: 12px;
-    color: var(--muted);
+    color: var(--floor-muted);
     letter-spacing: 0.04em;
   }
 
@@ -619,17 +665,80 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .footer-brand { grid-column: 1 / -1; }
   }
+  @media (max-width: 1212px) {
+    .window { margin: 24px 16px 0; }
+  }
   @media (max-width: 640px) {
     .container { padding: 0 16px; }
     .nav-links, .nav-cta { display: none; }
     .nav-toggle { display: flex; }
     .mobile-menu a { padding: 13px 16px; }
     .mobile-menu .menu-cta { margin: 18px 16px 0; }
-    .hero { padding: 64px 0 48px; }
+    .window { height: 180px; border-width: 4px; background-position: 58% 50%; }
+    .hero { padding: 36px 0 40px; }
     .grid { grid-template-columns: 1fr; }
-    .app-card { min-height: 0; }
     .footer-grid { grid-template-columns: 1fr; gap: 28px; }
     .modal { padding: 32px 24px; }
+
+    /* スマホ幅は一覧の形: 棚1つを1枚のパネルにして1行1アプリ。棚板はパネルの下に1枚 */
+    .app-grid {
+      display: block;
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 0 16px;
+      margin-bottom: 10px;
+    }
+    .app-grid::after {
+      content: "";
+      position: absolute;
+      left: -6px;
+      right: -6px;
+      bottom: -11px;
+      height: 10px;
+      border-radius: 2px;
+      background: linear-gradient(var(--board-top), var(--board-bottom));
+      box-shadow: 0 8px 12px -6px rgba(40, 25, 10, 0.4);
+    }
+    .app-card {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      grid-template-areas:
+        "mono body badge"
+        "mono foot foot";
+      gap: 10px 12px;
+      min-height: 0;
+      padding: 16px 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .app-card + .app-card { border-top: 1px solid var(--hairline); }
+    .app-card:hover { box-shadow: none; }
+    .app-card::after { display: none; }
+    .app-top { display: contents; }
+    .mono { grid-area: mono; width: 40px; height: 40px; border-radius: 10px; font-size: 18px; }
+    .badge { grid-area: badge; align-self: start; justify-self: end; }
+    .app-body { grid-area: body; }
+    .app-name { font-size: 16px; }
+    .app-foot {
+      grid-area: foot;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-cta {
+      margin-left: auto;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .app-card.skeleton { display: flex; flex-direction: column; gap: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -668,6 +777,9 @@
 </header>
 
 <main id="top" data-inert-target>
+  <!-- 部屋の窓(飾り) -->
+  <div class="window" aria-hidden="true"></div>
+
   <!-- Hero -->
   <section class="hero container">
     <p class="eyebrow">Apps by tomu</p>
@@ -853,12 +965,14 @@
     body.appendChild(el('p', 'app-desc', app.desc));
     card.appendChild(body);
 
+    // 印とボタンは1つの箱にまとめる(パソコン幅は縦に積み、スマホ幅は横に並べる)
+    const foot = el('div', 'app-foot');
     if (app.mobile || app.offline) {
       const marks = el('ul', 'marks');
       marks.setAttribute('aria-label', '特徴');
       if (app.mobile) marks.appendChild(renderMark('mobile', 'スマホ向け'));
       if (app.offline) marks.appendChild(renderMark('offline', 'オフラインでも動く'));
-      card.appendChild(marks);
+      foot.appendChild(marks);
     }
 
     const href = safeUrl(app.url);
@@ -869,8 +983,9 @@
       cta.target = '_blank';
       cta.rel = 'noopener';
       cta.appendChild(el('span', 'visually-hidden', '（' + app.name + '・新しいタブで開きます）'));
-      card.appendChild(cta);
+      foot.appendChild(cta);
     }
+    card.appendChild(foot);
     return card;
   }
 
