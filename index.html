@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tomu select — AI Products & Development Services</title>
+<title>tomu select — つくったアプリの棚</title>
+<meta name="description" content="個人開発者のとむが作ったアプリの棚。暮らしの道具から占い、音で遊ぶものまで、目的ごとに並べています。">
 <style>
   /* テーマトークンは light-dark(ライト値, ダーク値) で一元管理する。
      OS設定は color-scheme: light dark が自動で追従し、
@@ -21,6 +22,10 @@
     --gold: light-dark(#c9a84c, #d4b45f);
     --gold-deep: light-dark(#a8873a, #e0c377);
     --gold-wash: light-dark(rgba(201, 168, 76, 0.08), rgba(212, 180, 95, 0.09));
+    /* 文字を載せる金系の面と文字色(小さい文字でも 4.5:1 を超える組み合わせ) */
+    --gold-soft: light-dark(#f3ead2, #3a3221);
+    --gold-ink: light-dark(#5c4a17, #e6cd8a);
+    --soon-bg: light-dark(#efede7, #262319);
     --error: light-dark(#b0503c, #d4715c);
     --skel: light-dark(#eeece6, #262319);
     --skel-shine: light-dark(#f6f4ef, #2e2a1f);
@@ -54,7 +59,7 @@
   body.is-modal-open { overflow: hidden; }
 
   a { color: inherit; text-decoration: none; }
-  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  a:focus-visible, button:focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
   }
@@ -121,19 +126,8 @@
   .nav-links a {
     transition: color 0.15s ease;
     padding: 4px 0;
-    position: relative;
   }
   .nav-links a:hover { color: var(--ink); }
-  .nav-links a.active { color: var(--ink); }
-  .nav-links a.active::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: 1.5px;
-    background: var(--gold);
-  }
   .btn {
     display: inline-block;
     font-size: 13px;
@@ -190,24 +184,23 @@
     color: var(--muted);
     border-bottom: 1px solid var(--hairline);
   }
-  .mobile-menu a.active { color: var(--ink); border-left: 2px solid var(--gold); padding-left: 30px; }
-  .mobile-menu .menu-cta { margin: 18px 32px 0; }
+  .mobile-menu .menu-cta { margin: 18px 32px 0; border-bottom: 1px solid var(--hairline-strong); }
 
   /* ---------- Hero ---------- */
   .hero {
     text-align: center;
-    padding: 120px 0 110px;
+    padding: 88px 0 64px;
   }
   .eyebrow {
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--gold-deep);
-    margin: 0 0 28px;
+    color: var(--gold-ink);
+    margin: 0 0 24px;
   }
   .hero h1 {
-    font-size: clamp(40px, 7vw, 68px);
+    font-size: clamp(40px, 7vw, 64px);
     font-weight: 300;
     letter-spacing: 0.14em;
     line-height: 1.15;
@@ -218,39 +211,158 @@
   .hero p {
     font-size: 16px;
     color: var(--muted);
-    max-width: 34em;
-    margin: 0 auto 44px;
+    max-width: 32em;
+    margin: 0 auto;
     text-wrap: balance;
   }
   .hero-rule {
     width: 48px;
     height: 1px;
     background: var(--gold);
-    margin: 0 auto 44px;
+    margin: 0 auto 36px;
     border: none;
   }
-  .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-  /* ---------- Sections ---------- */
-  .section { padding: 88px 0; scroll-margin-top: 68px; }
-  .section + .section { border-top: 1px solid var(--hairline); }
-  .section-head {
+  /* ---------- Shelf (tabs) ---------- */
+  .shelf { padding: 0 0 88px; scroll-margin-top: 68px; }
+  .tabs {
+    display: flex;
+    gap: 32px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 32px;
+  }
+  .tab {
+    font-family: inherit;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 12px 0;
+    min-height: 44px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] {
+    color: var(--ink);
+    font-weight: 600;
+    border-bottom-color: var(--gold);
+  }
+  .tab-panel[hidden] { display: none; }
+  .tab-panel:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; }
+
+  .shelf-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+  .shelf-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 13px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .shelf-nav a:hover { border-color: var(--gold); background: var(--gold-wash); }
+
+  .shelf-group { scroll-margin-top: 84px; }
+  .shelf-group + .shelf-group { margin-top: 56px; }
+  .shelf-head {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 48px;
-    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--hairline);
   }
-  .section-head h2 {
-    font-size: 24px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    margin: 0;
-  }
-  .section-head .sub { font-size: 14px; color: var(--muted); margin: 0; }
+  .shelf-head h2 { font-size: 20px; font-weight: 600; letter-spacing: 0.06em; margin: 0; }
+  .shelf-head .count { font-size: 13px; color: var(--muted); }
 
-  /* ---------- Product Grid ---------- */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  /* ---------- App card ---------- */
+  .app-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 260px;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .app-card:hover { box-shadow: var(--shadow-lift); border-color: var(--hairline-strong); }
+  .app-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .mono {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gold-soft);
+    color: var(--gold-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-free { background: var(--surface); color: var(--ink); border: 1px solid var(--ink); }
+  .badge-paid { background: var(--ink); color: var(--surface); border: 1px solid var(--ink); }
+  .badge-both { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
+  .badge-soon { background: var(--soon-bg); color: var(--muted); border: 1px dashed var(--faint); }
+  .app-body { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .app-name { font-size: 17px; font-weight: 600; line-height: 1.4; margin: 0; }
+  .app-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin: 0; }
+  .marks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .marks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: var(--bg);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .marks svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .app-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1px solid var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .app-cta:hover { background: var(--ink); color: var(--bg); }
+
+  .load-error { color: var(--error); font-size: 14px; margin: 0; }
+
+  /* ---------- Business panel ---------- */
+  .business-note { font-size: 14px; color: var(--muted); margin: 0 0 32px; max-width: 40em; }
+  .business-note a { color: var(--gold-ink); text-decoration: underline; text-underline-offset: 3px; }
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -318,17 +430,17 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.02em;
   }
-  .price .per { font-size: 11px; font-weight: 400; color: var(--faint); margin-left: 2px; }
+  .price .per { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 2px; }
   .card-link {
     font-size: 12px;
     letter-spacing: 0.1em;
-    color: var(--gold-deep);
+    color: var(--gold-ink);
     transition: color 0.15s ease;
   }
   .card:hover .card-link { color: var(--ink); }
 
   /* ---------- Skeleton loading ---------- */
-  .card.skeleton { cursor: default; pointer-events: none; }
+  .skeleton { pointer-events: none; }
   .skel {
     background: var(--skel);
     border-radius: 4px;
@@ -346,13 +458,11 @@
   @keyframes shimmer {
     to { transform: translateX(100%); }
   }
-  .skel-icon { width: 40px; height: 40px; border-radius: var(--radius); }
+  .skel-mono { width: 48px; height: 48px; border-radius: 12px; }
   .skel-title { width: 60%; height: 16px; margin-top: 4px; }
   .skel-line { width: 100%; height: 11px; }
   .skel-line.short { width: 72%; }
-  .skel-foot { display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--hairline); }
-  .skel-price { width: 80px; height: 15px; }
-  .skel-link { width: 64px; height: 12px; }
+  .skel-cta { width: 100%; height: 44px; border-radius: 8px; margin-top: auto; }
 
   /* ---------- Modal ---------- */
   .modal-overlay {
@@ -407,7 +517,7 @@
     display: inline-block;
     font-size: 11px;
     letter-spacing: 0.1em;
-    color: var(--gold-deep);
+    color: var(--gold-ink);
     border: 1px solid var(--gold);
     border-radius: 999px;
     padding: 2px 12px;
@@ -420,7 +530,7 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--faint);
+    color: var(--muted);
     margin: 0 0 12px;
   }
   .feature-list { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 9px; }
@@ -452,164 +562,29 @@
   }
   .modal-foot .price { font-size: 20px; }
 
-  /* ---------- Services ---------- */
-  .services-panel {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 5fr 6fr;
-    overflow: hidden;
-  }
-  .services-info {
-    padding: 48px 44px;
-    border-right: 1px solid var(--hairline);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .services-info h3 {
-    font-size: 21px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    margin: 0;
-    text-wrap: balance;
-  }
-  .services-info p { font-size: 14px; color: var(--muted); margin: 0; }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-  .tag {
-    font-size: 11.5px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    border: 1px solid var(--hairline-strong);
-    border-radius: 999px;
-    padding: 5px 14px;
-    background: transparent;
-    cursor: pointer;
-    font-family: inherit;
-    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-  }
-  .tag[aria-pressed="true"] {
-    border-color: var(--gold);
-    color: var(--gold-deep);
-    background: var(--gold-wash);
-  }
-  /* hover はポインタ対応デバイスのみ・選択状態(背景あり)より控えめに。
-     タッチデバイスでのhover残留による「選択済みに見える」誤認を防ぐ */
-  @media (hover: hover) {
-    .tag:hover {
-      border-color: var(--gold);
-      color: var(--gold-deep);
-    }
-  }
-  .services-note {
-    margin-top: auto;
-    padding-top: 24px;
-    border-top: 1px solid var(--hairline);
-    font-size: 12.5px;
-    color: var(--faint);
-  }
-  .services-form {
-    padding: 48px 44px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    scroll-margin-top: 84px;
-  }
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .field label .req { color: var(--gold-deep); margin-left: 4px; letter-spacing: 0; }
-  .field input, .field select, .field textarea {
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--ink);
-    background: var(--bg);
-    border: 1px solid var(--hairline-strong);
-    border-radius: var(--radius);
-    padding: 11px 14px;
-    transition: border-color 0.15s ease;
-  }
-  .field input::placeholder, .field textarea::placeholder { color: var(--faint); }
-  .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--gold); }
-  .field textarea { resize: vertical; min-height: 96px; }
-  .field.invalid input, .field.invalid textarea { border-color: var(--error); }
-  .err-msg { font-size: 12px; color: var(--error); margin: 0; display: none; }
-  .field.invalid .err-msg { display: block; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .form-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
-  .form-foot .hint { font-size: 12px; color: var(--faint); }
-
-  /* Success state */
-  .form-success {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 18px;
-    padding: 48px 44px;
-    min-height: 420px;
-    scroll-margin-top: 84px;
-  }
-  .form-success.is-open { display: flex; }
-  .services-form.is-hidden { display: none; }
-  .success-mark {
-    width: 56px;
-    height: 56px;
-    border: 1px solid var(--gold);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    color: var(--gold-deep);
-    background: var(--gold-wash);
-  }
-  .success-mark svg { width: 24px; height: 24px; }
-  .form-success h3 { font-size: 18px; font-weight: 600; letter-spacing: 0.08em; margin: 0; }
-  .form-success p { font-size: 13.5px; color: var(--muted); margin: 0; max-width: 26em; }
-  .link-reset {
-    font-size: 12.5px;
-    letter-spacing: 0.06em;
-    color: var(--gold-deep);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    padding: 4px;
-  }
-  .link-reset:hover { color: var(--ink); }
-
   /* ---------- About ---------- */
-  .about { text-align: center; }
+  .about {
+    text-align: center;
+    padding: 88px 0;
+    border-top: 1px solid var(--hairline);
+    scroll-margin-top: 68px;
+  }
   .about-lead {
-    max-width: 38em;
+    max-width: 36em;
     margin: 0 auto;
     color: var(--muted);
     text-wrap: balance;
   }
+  .about-lead a { color: var(--gold-ink); text-decoration: underline; text-underline-offset: 3px; }
 
   /* ---------- Footer ---------- */
   .footer {
     border-top: 1px solid var(--hairline);
     padding: 64px 0 40px;
-    margin-top: 24px;
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr;
     gap: 40px;
     margin-bottom: 56px;
   }
@@ -624,43 +599,35 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--faint);
+    color: var(--muted);
     margin: 0 0 16px;
   }
   .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
   .footer ul a { font-size: 13px; color: var(--muted); transition: color 0.15s ease; }
-  .footer ul a:hover { color: var(--gold-deep); }
+  .footer ul a:hover { color: var(--gold-ink); }
   .footer-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
     padding-top: 28px;
     border-top: 1px solid var(--hairline);
     font-size: 12px;
-    color: var(--faint);
+    color: var(--muted);
     letter-spacing: 0.04em;
   }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 920px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
-    .services-panel { grid-template-columns: 1fr; }
-    .services-info { border-right: none; border-bottom: 1px solid var(--hairline); }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .footer-brand { grid-column: 1 / -1; }
   }
   @media (max-width: 640px) {
-    .container { padding: 0 20px; }
+    .container { padding: 0 16px; }
     .nav-links, .nav-cta { display: none; }
     .nav-toggle { display: flex; }
-    .hero { padding: 80px 0 72px; }
-    .section { padding: 64px 0; }
+    .mobile-menu a { padding: 13px 16px; }
+    .mobile-menu .menu-cta { margin: 18px 16px 0; }
+    .hero { padding: 64px 0 48px; }
     .grid { grid-template-columns: 1fr; }
-    .services-info, .services-form { padding: 32px 24px; }
-    .form-success { padding: 32px 24px; }
-    .field-row { grid-template-columns: 1fr; }
+    .app-card { min-height: 0; }
     .footer-grid { grid-template-columns: 1fr; gap: 28px; }
     .modal { padding: 32px 24px; }
   }
@@ -678,133 +645,67 @@
   <div class="container nav-inner">
     <a class="logo" href="#top">tomu select<span class="dot" aria-hidden="true"></span></a>
     <nav class="nav-links" aria-label="メインナビゲーション">
-      <a href="#products" data-spy="products">Products</a>
-      <a href="#services" data-spy="services">Services</a>
-      <a href="#about" data-spy="about">About</a>
-      <a href="#contact">Contact</a>
+      <a href="#apps">アプリ</a>
+      <a href="#business">法人向け</a>
+      <a href="#about">About</a>
     </nav>
-    <a class="btn btn-outline nav-cta" href="#contact">お問い合わせ</a>
+    <a class="btn btn-outline nav-cta" href="https://tomu-ai.dev/#contact" target="_blank" rel="noopener">制作のご相談</a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="メニューを開く">
-      <svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <svg class="icon-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
         <path d="M4 7h16M4 12h16M4 17h16"/>
       </svg>
-      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18"/>
       </svg>
     </button>
   </div>
   <nav class="mobile-menu" id="mobile-menu" aria-label="モバイルナビゲーション">
-    <a href="#products" data-spy="products">Products</a>
-    <a href="#services" data-spy="services">Services</a>
-    <a href="#about" data-spy="about">About</a>
-    <a href="#contact">Contact</a>
-    <a class="btn btn-outline menu-cta" href="#contact">お問い合わせ</a>
+    <a href="#apps">アプリ</a>
+    <a href="#business">法人向け</a>
+    <a href="#about">About</a>
+    <a class="btn btn-outline menu-cta" href="https://tomu-ai.dev/#contact" target="_blank" rel="noopener">制作のご相談</a>
   </nav>
 </header>
 
 <main id="top" data-inert-target>
   <!-- Hero -->
   <section class="hero container">
-    <p class="eyebrow">AI Products &amp; Development</p>
+    <p class="eyebrow">Apps by tomu</p>
     <h1>tomu <strong>select</strong></h1>
     <hr class="hero-rule">
-    <p>AIプロダクトを、開発者のために。選び抜かれたツールの提供と、御社の課題に合わせた受託開発を、ひとつの窓口で。</p>
-    <div class="hero-cta">
-      <a class="btn" href="#products">Browse Products</a>
-      <a class="btn btn-outline" href="#services">開発を依頼する</a>
-    </div>
+    <p>暮らしの道具から占い、音で遊ぶものまで。個人で作ったアプリを、目的ごとの棚に並べています。無料のものは、そのまま使えます。</p>
   </section>
 
-  <!-- Product Grid -->
-  <section class="section" id="products">
-    <div class="container">
-      <div class="section-head">
-        <h2>Products</h2>
-        <p class="sub">現場で検証済みのAIプロダクトを、そのまま導入できる形で。</p>
-      </div>
+  <!-- Shelf -->
+  <section class="shelf container" id="shelf" aria-label="アプリの棚">
+    <div class="tabs" role="tablist" aria-label="表示の切り替え">
+      <button class="tab" type="button" role="tab" id="tab-apps" aria-controls="apps" aria-selected="true">アプリ</button>
+      <button class="tab" type="button" role="tab" id="tab-business" aria-controls="business" aria-selected="false" tabindex="-1">法人向け</button>
+    </div>
+
+    <div class="tab-panel" id="apps" role="tabpanel" aria-labelledby="tab-apps" tabindex="0">
+      <nav class="shelf-nav" id="shelf-nav" aria-label="棚へ移動"></nav>
+      <div id="shelf-list" aria-busy="true"></div>
+    </div>
+
+    <div class="tab-panel" id="business" role="tabpanel" aria-labelledby="tab-business" tabindex="0" hidden>
+      <p class="business-note">
+        法人向けに開発しているプロダクトです。開発中のものを含みます。導入のご相談は
+        <a href="https://tomu-ai.dev/#contact" target="_blank" rel="noopener">tomu-ai.dev</a> から。
+      </p>
       <div class="grid" id="product-grid" aria-busy="true"></div>
-      <p class="visually-hidden" id="grid-status" role="status" aria-live="polite"></p>
     </div>
+
+    <p class="visually-hidden" id="grid-status" role="status" aria-live="polite"></p>
   </section>
 
-  <!-- Services -->
-  <section class="section" id="services">
-    <div class="container">
-      <div class="section-head">
-        <h2>Services</h2>
-        <p class="sub">既製品で足りない部分は、要件に合わせてお作りします。</p>
-      </div>
-      <div class="services-panel">
-        <div class="services-info">
-          <h3>開発を依頼する</h3>
-          <p>AIエージェント構築、RAG基盤、業務自動化、API連携——小さなPoCから本番運用まで、段階に合わせてご提案します。まずは課題をお聞かせください。</p>
-          <div class="tags" role="group" aria-label="依頼カテゴリ(1つ選択)">
-            <button class="tag" type="button" data-category="agent" aria-pressed="true">AIエージェント</button>
-            <button class="tag" type="button" data-category="rag" aria-pressed="false">RAG / 検索基盤</button>
-            <button class="tag" type="button" data-category="automation" aria-pressed="false">業務自動化</button>
-            <button class="tag" type="button" data-category="api" aria-pressed="false">API連携</button>
-            <button class="tag" type="button" data-category="poc" aria-pressed="false">PoC検証</button>
-            <button class="tag" type="button" data-category="other" aria-pressed="false">その他</button>
-          </div>
-          <p class="services-note">通常2営業日以内にご返信します。秘密保持契約(NDA)の締結にも対応しています。</p>
-        </div>
-        <form class="services-form" id="contact" novalidate>
-          <div class="field-row">
-            <div class="field" data-field="name">
-              <label for="f-name">お名前<span class="req">*</span></label>
-              <input id="f-name" type="text" placeholder="山田 太郎" autocomplete="name">
-              <p class="err-msg" id="err-name">お名前を入力してください。</p>
-            </div>
-            <div class="field">
-              <label for="f-company">会社名</label>
-              <input id="f-company" type="text" placeholder="株式会社サンプル" autocomplete="organization">
-            </div>
-          </div>
-          <div class="field" data-field="email">
-            <label for="f-email">メールアドレス<span class="req">*</span></label>
-            <input id="f-email" type="email" placeholder="you@example.co.jp" autocomplete="email">
-            <p class="err-msg" id="err-email">有効なメールアドレスを入力してください。</p>
-          </div>
-          <div class="field">
-            <label for="f-budget">ご予算の目安</label>
-            <select id="f-budget">
-              <option>選択してください</option>
-              <option>〜50万円</option>
-              <option>50〜150万円</option>
-              <option>150〜500万円</option>
-              <option>500万円〜 / 継続契約</option>
-            </select>
-          </div>
-          <div class="field" data-field="detail">
-            <label for="f-detail">ご相談内容<span class="req">*</span></label>
-            <textarea id="f-detail" placeholder="解決したい課題や、想定しているスケジュールをお書きください。"></textarea>
-            <p class="err-msg" id="err-detail">ご相談内容を入力してください。</p>
-          </div>
-          <div class="form-foot">
-            <span class="hint">送信いただいた内容は相談目的以外には使用しません。</span>
-            <button class="btn" type="submit">相談内容を送信</button>
-          </div>
-        </form>
-        <div class="form-success" id="form-success" role="status" tabindex="-1">
-          <div class="success-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12.5l4.5 4.5L19 7.5"/>
-            </svg>
-          </div>
-          <h3>送信しました</h3>
-          <p>お問い合わせありがとうございます。通常2営業日以内に、担当者よりメールにてご返信します。</p>
-          <button class="link-reset" type="button" id="form-reset">別の相談内容を送る →</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About strip -->
-  <section class="section about" id="about">
+  <!-- About -->
+  <section class="about" id="about">
     <div class="container">
       <p class="eyebrow">About</p>
       <p class="about-lead">
-        tomu select は、自社プロダクトの開発・運用で得た知見をもとに、実務で機能するAIツールだけを選んで提供するプラットフォームです。売って終わりではなく、導入後の運用まで並走します。
+        tomu select は、個人開発者のとむが作ったアプリの棚です。困りごとから生まれた小さな道具も、育てている途中のサービスも、使えるものから順に並べています。作り手や制作のご相談については
+        <a href="https://tomu-ai.dev" target="_blank" rel="noopener">tomu-ai.dev</a> へ。
       </p>
     </div>
   </section>
@@ -814,7 +715,7 @@
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <button class="modal-close" type="button" id="modal-close" aria-label="閉じる">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18"/>
       </svg>
     </button>
@@ -828,7 +729,7 @@
     <ul class="feature-list" id="modal-features"></ul>
     <div class="modal-foot">
       <span class="price" id="modal-price"></span>
-      <button class="btn" type="button" id="modal-cta">導入相談する</button>
+      <a class="btn" href="https://tomu-ai.dev/#contact" target="_blank" rel="noopener">相談する</a>
     </div>
   </div>
 </div>
@@ -838,41 +739,25 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a class="logo" href="#top">tomu select<span class="dot" aria-hidden="true"></span></a>
-        <p>AIプロダクトの販売と受託開発のB2Bハブ。検証済みのツールと、確かな実装力を。</p>
+        <p>とむが作ったアプリの棚。</p>
       </div>
       <div>
-        <h4>Products</h4>
-        <!-- 商品リンクは PRODUCTS 配列からJSで生成する(手動メンテの重複を持たない) -->
-        <ul id="footer-product-links"></ul>
+        <h4>棚</h4>
+        <!-- 棚のリンクは apps.json の shelves から生成する(HTML側と二重管理しない) -->
+        <ul id="footer-shelf-links"></ul>
       </div>
       <div>
-        <h4>Services</h4>
+        <h4>Links</h4>
         <ul>
-          <li><a href="#services">受託開発</a></li>
-          <li><a href="#services">PoC検証</a></li>
-          <li><a href="#services">技術顧問</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="#">News</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="#">利用規約</a></li>
-          <li><a href="#">プライバシーポリシー</a></li>
-          <li><a href="#">特定商取引法に基づく表記</a></li>
+          <li><a href="https://tomu-ai.dev" target="_blank" rel="noopener">tomu-ai.dev</a></li>
+          <li><a href="https://github.com/tomu-ai963" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://bsky.app/profile/tomu963.bsky.social" target="_blank" rel="noopener">Bluesky</a></li>
+          <li><a href="https://x.com/tomu_ai_dev" target="_blank" rel="noopener">X</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 tomu select. All rights reserved.</span>
-      <span>Tokyo, Japan</span>
+      <span>© 2026 tomu</span>
     </div>
   </div>
 </footer>
@@ -880,9 +765,11 @@
 <script>
   'use strict';
 
-  /* ==================== Product data ====================
-     将来的にAPI取得へ差し替える前提。
-     取得中: renderSkeleton(grid) → 取得後: renderProducts(grid, data) */
+  /* ==================== Data ====================
+     アプリ・棚・法人向け商品は apps.json の1か所で管理する。
+     取得中: スケルトン表示 → 取得後: 棚と法人向けグリッドを描画 */
+  const DATA_URL = 'apps.json';
+
   const ICONS = {
     invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
     shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z"/><path d="M9.5 12l2 2 3.5-4"/></svg>',
@@ -892,107 +779,15 @@
     code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-4 5 4 5M16 7l4 5-4 5"/><path d="M13.5 5l-3 14"/></svg>'
   };
 
-  const PRODUCTS = [
-    {
-      id: 'ap-invoice',
-      icon: 'invoice',
-      name: 'AP Invoice Reader',
-      desc: '請求書PDFをAIが構造化データへ自動変換。会計システム連携まで見据えた抽出精度を、経理の現場基準で。',
-      fullDesc: '毎月届く形式バラバラの請求書PDFを、勘定科目・税区分まで揃った構造化データに自動変換します。人の目によるダブルチェックを前提とした確信度スコア付きで、経理業務の締め作業を大幅に短縮します。',
-      price: '¥48,000', per: '/月',
-      categoryId: 'automation',
-      category: '業務自動化',
-      features: ['多様な請求書レイアウトの自動認識', '項目ごとの確信度スコア表示', '会計システム向けCSV / API出力', '仕訳ルールの学習・カスタマイズ', '処理履歴の監査ログ']
-    },
-    {
-      id: 'contract-review',
-      icon: 'shield',
-      name: 'Contract Review AI',
-      desc: '建設業向け契約書レビュー支援。リスク条項の検出と修正提案を、監査ログ付きで安全に運用できます。',
-      fullDesc: '建設業の契約実務に特化したレビューエンジンが、不利な条項・欠落しがちな条項を検出し、修正文案まで提案します。すべてのレビュー実行が監査ログとして残るため、社内統制の要件にもそのまま対応できます。',
-      price: '¥120,000', per: '/月',
-      categoryId: 'agent',
-      category: 'AIエージェント',
-      features: ['建設業特化のリスク条項検出', '修正文案の自動提案', 'レビュー実行の完全な監査ログ', '社内ひな形との差分比較', '弁護士レビュー連携ワークフロー']
-    },
-    {
-      id: 'knowledge-rag',
-      icon: 'search',
-      name: 'Knowledge RAG',
-      desc: '社内ドキュメントを横断検索できるRAG基盤。根拠付きの回答で、ナレッジの属人化を解消します。',
-      fullDesc: '規程・議事録・技術資料など社内に散らばるドキュメントを一元インデックス化し、自然文の質問に根拠リンク付きで回答します。「どこに書いてあるか分からない」を解消し、ベテランの知見を組織の資産に変えます。',
-      price: '¥68,000', per: '/月',
-      categoryId: 'rag',
-      category: 'RAG / 検索基盤',
-      features: ['複数ソースの横断インデックス', '根拠箇所へのリンク付き回答', '回答品質メトリクスの計測', 'アクセス権限に応じた検索制御', 'Slack / Teams連携']
-    },
-    {
-      id: 'deflect',
-      icon: 'chart',
-      name: 'Deflect Analytics',
-      desc: '問い合わせ自動応答の解決率を可視化。AIが答えた・答えられなかったを計測し、改善サイクルを回せます。',
-      fullDesc: 'AI自動応答の「解決できた / できなかった」を定量計測し、ナレッジの穴を特定します。導入して終わりになりがちなチャットボットを、データに基づいて育て続けるための分析基盤です。',
-      price: '¥35,000', per: '/月',
-      categoryId: 'poc',
-      category: 'PoC検証',
-      features: ['解決率・エスカレーション率の計測', '未解決トピックの自動クラスタリング', 'ナレッジ改善の優先度提案', '週次サマリーレポート配信']
-    },
-    {
-      id: 'agent-workbench',
-      icon: 'board',
-      name: 'Agent Workbench',
-      desc: '業務エージェントの構築・運用ダッシュボード。ツール接続と実行ログを一箇所で管理できます。',
-      fullDesc: '社内業務を任せるAIエージェントの構築から運用までを一つの画面で。ツール接続の管理、実行ログの追跡、失敗時のリトライ制御まで、エージェント運用に必要な足回りをまとめて提供します。',
-      price: '¥88,000', per: '/月',
-      categoryId: 'agent',
-      category: 'AIエージェント',
-      features: ['ノーコードのツール接続管理', '実行ログのステップ単位トレース', '失敗時のリトライ・通知制御', '複数エージェントの一元監視', 'コスト・トークン使用量の可視化']
-    },
-    {
-      id: 'api-starter',
-      icon: 'code',
-      name: 'API Starter Kit',
-      desc: 'Claude API連携の実装テンプレート集。認証・レート制御・構造化出力まで、初日から本番品質で。',
-      fullDesc: 'Claude APIを本番投入する際に必ず必要になる実装パターンを、動くコードとして提供します。認証・レート制御・構造化出力・エラーハンドリングを網羅し、検証開始から本番リリースまでの期間を短縮します。',
-      price: '¥29,800', per: '買い切り',
-      categoryId: 'api',
-      category: 'API連携',
-      features: ['認証・キー管理のベストプラクティス', 'レート制御・リトライ実装', '構造化出力のスキーマ設計例', 'ストリーミング応答の実装例', '導入サポート(30日)付き']
-    }
-  ];
+  const MARK_ICONS = {
+    mobile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+    offline: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>'
+  };
 
-  /* ==================== Product grid rendering ==================== */
-  const grid = document.getElementById('product-grid');
-  const gridStatus = document.getElementById('grid-status');
-
-  // 読み上げ用のstatus要素(視覚非表示)にだけ通知を出す。グリッド本体はaria-busyのみ。
-  function announceGridStatus(message) {
-    if (gridStatus) gridStatus.textContent = message;
-  }
-
-  function renderSkeleton(container, count = PRODUCTS.length) {
-    container.setAttribute('aria-busy', 'true');
-    announceGridStatus('商品を読み込んでいます…');
-    let html = '';
-    for (let i = 0; i < count; i++) {
-      html +=
-        '<div class="card skeleton" aria-hidden="true">' +
-          '<div class="skel skel-icon"></div>' +
-          '<div class="skel skel-title"></div>' +
-          '<div class="skel skel-line"></div>' +
-          '<div class="skel skel-line"></div>' +
-          '<div class="skel skel-line short"></div>' +
-          '<div class="skel-foot">' +
-            '<div class="skel skel-price"></div>' +
-            '<div class="skel skel-link"></div>' +
-          '</div>' +
-        '</div>';
-    }
-    container.innerHTML = html;
-  }
+  const PRICE_LABELS = { free: '無料', paid: '有料', both: '無料＋有料', soon: '準備中' };
 
   // 外部データがそのまま流れても安全なよう、テキストはすべて textContent で挿入する。
-  // innerHTML を使うのはローカル定義の ICONS マップの値のみ(外部データは鍵としてのみ使用)。
+  // innerHTML を使うのはローカル定義の ICONS / MARK_ICONS の値のみ(外部データは鍵としてのみ使用)。
   function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -1000,12 +795,132 @@
     return node;
   }
 
-  function setIcon(target, iconKey) {
-    target.innerHTML = Object.prototype.hasOwnProperty.call(ICONS, iconKey) ? ICONS[iconKey] : '';
+  function own(map, key) {
+    return Object.prototype.hasOwnProperty.call(map, key);
   }
 
+  function setIcon(target, iconKey) {
+    target.innerHTML = own(ICONS, iconKey) ? ICONS[iconKey] : '';
+  }
+
+  // リンク先は https のみ許可する(javascript: などをデータから流し込ませない)
+  function safeUrl(url) {
+    return typeof url === 'string' && /^https:\/\//.test(url) ? url : null;
+  }
+
+  const statusEl = document.getElementById('grid-status');
+  function announce(message) {
+    if (statusEl) statusEl.textContent = message;
+  }
+
+  /* ==================== Apps (shelves) ==================== */
+  const shelfList = document.getElementById('shelf-list');
+  const shelfNav = document.getElementById('shelf-nav');
+
+  function renderAppSkeleton(count = 4) {
+    shelfList.setAttribute('aria-busy', 'true');
+    const grid = el('div', 'app-grid');
+    for (let i = 0; i < count; i++) {
+      const card = el('div', 'app-card skeleton');
+      card.setAttribute('aria-hidden', 'true');
+      ['skel skel-mono', 'skel skel-title', 'skel skel-line', 'skel skel-line short', 'skel skel-cta']
+        .forEach((cls) => card.appendChild(el('div', cls)));
+      grid.appendChild(card);
+    }
+    shelfList.replaceChildren(grid);
+  }
+
+  function renderMark(kind, label) {
+    const item = el('li');
+    item.innerHTML = MARK_ICONS[kind];
+    item.appendChild(document.createTextNode(label));
+    return item;
+  }
+
+  function renderAppCard(app) {
+    const card = el('article', 'app-card');
+
+    const top = el('div', 'app-top');
+    const mono = el('span', 'mono', Array.from(app.name)[0] || '');
+    mono.setAttribute('aria-hidden', 'true');
+    top.appendChild(mono);
+    const price = own(PRICE_LABELS, app.price) ? app.price : 'free';
+    top.appendChild(el('span', 'badge badge-' + price, PRICE_LABELS[price]));
+    card.appendChild(top);
+
+    const body = el('div', 'app-body');
+    body.appendChild(el('h3', 'app-name', app.name));
+    body.appendChild(el('p', 'app-desc', app.desc));
+    card.appendChild(body);
+
+    if (app.mobile || app.offline) {
+      const marks = el('ul', 'marks');
+      marks.setAttribute('aria-label', '特徴');
+      if (app.mobile) marks.appendChild(renderMark('mobile', 'スマホ向け'));
+      if (app.offline) marks.appendChild(renderMark('offline', 'オフラインでも動く'));
+      card.appendChild(marks);
+    }
+
+    const href = safeUrl(app.url);
+    if (href) {
+      const label = app.link === 'github' ? 'GitHub で見る' : price === 'soon' ? '見てみる' : '使ってみる';
+      const cta = el('a', 'app-cta', label + ' →');
+      cta.href = href;
+      cta.target = '_blank';
+      cta.rel = 'noopener';
+      cta.appendChild(el('span', 'visually-hidden', '（' + app.name + '・新しいタブで開きます）'));
+      card.appendChild(cta);
+    }
+    return card;
+  }
+
+  function renderShelves(shelves, apps) {
+    shelfList.replaceChildren();
+    shelfNav.replaceChildren();
+    const footerLinks = document.getElementById('footer-shelf-links');
+    if (footerLinks) footerLinks.replaceChildren();
+
+    shelves.forEach((shelf) => {
+      const items = apps.filter((app) => app.shelf === shelf.id);
+      if (!items.length) return;
+      const anchor = 'shelf-' + shelf.id;
+
+      const group = el('section', 'shelf-group');
+      group.id = anchor;
+      group.setAttribute('aria-labelledby', anchor + '-title');
+      const head = el('div', 'shelf-head');
+      const title = el('h2', null, shelf.title);
+      title.id = anchor + '-title';
+      head.appendChild(title);
+      head.appendChild(el('span', 'count', items.length + '件'));
+      group.appendChild(head);
+
+      const grid = el('div', 'app-grid');
+      items.forEach((app) => grid.appendChild(renderAppCard(app)));
+      group.appendChild(grid);
+      shelfList.appendChild(group);
+
+      const navLink = el('a', null, shelf.title);
+      navLink.href = '#' + anchor;
+      shelfNav.appendChild(navLink);
+
+      if (footerLinks) {
+        const item = el('li');
+        const link = el('a', null, shelf.title);
+        link.href = '#' + anchor;
+        item.appendChild(link);
+        footerLinks.appendChild(item);
+      }
+    });
+    shelfList.setAttribute('aria-busy', 'false');
+  }
+
+  /* ==================== Business products ==================== */
+  const productGrid = document.getElementById('product-grid');
+  let PRODUCTS = [];
+
   function renderProducts(container, products) {
-    container.innerHTML = '';
+    container.replaceChildren();
     products.forEach((p) => {
       const card = el('button', 'card');
       card.type = 'button';
@@ -1029,41 +944,95 @@
       container.appendChild(card);
     });
     container.setAttribute('aria-busy', 'false');
-    announceGridStatus(`${products.length}件の商品を表示しました`);
   }
 
   // クリックはグリッドへのイベント委譲1本で処理する
-  // (再取得→再レンダリングしてもリスナーの再登録が不要)
-  grid.addEventListener('click', (e) => {
+  productGrid.addEventListener('click', (e) => {
     const card = e.target.closest('.card[data-id]');
     if (card) openModal(card.getAttribute('data-id'), card);
   });
 
-  // データはローカルの PRODUCTS なので即時描画する。
-  // API接続時は renderSkeleton(grid) → fetch → renderProducts(grid, data) の順に差し替える
-  // (renderSkeleton とスケルトンCSSはそのために温存している)。
-  renderProducts(grid, PRODUCTS);
+  /* ==================== Load ==================== */
+  renderAppSkeleton();
+  announce('アプリの一覧を読み込んでいます…');
 
-  /* ==================== Footer product links ==================== */
-  // フッターの商品リンクは PRODUCTS から生成する(HTML側と二重管理しない)
-  const footerProductLinks = document.getElementById('footer-product-links');
-  if (footerProductLinks) {
-    const labels = PRODUCTS.slice(0, 3).map((p) => p.name).concat('すべて見る');
-    labels.forEach((label) => {
-      const item = document.createElement('li');
-      const link = el('a', null, label);
-      link.href = '#products';
-      item.appendChild(link);
-      footerProductLinks.appendChild(item);
+  fetch(DATA_URL)
+    .then((res) => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then((data) => {
+      const shelves = Array.isArray(data.shelves) ? data.shelves : [];
+      const apps = Array.isArray(data.apps) ? data.apps : [];
+      PRODUCTS = Array.isArray(data.business) ? data.business : [];
+      renderShelves(shelves, apps);
+      renderProducts(productGrid, PRODUCTS);
+      announce(apps.length + '件のアプリを表示しました');
+      // 棚へのリンク(#shelf-…)で開かれたときは、描画後にその棚へ移動する
+      if (location.hash.startsWith('#shelf-')) scrollToHash();
+    })
+    .catch(() => {
+      const message = 'アプリの一覧を読み込めませんでした。ページを再読み込みしてください。';
+      shelfList.replaceChildren(el('p', 'load-error', message));
+      productGrid.replaceChildren(el('p', 'load-error', message));
+      shelfList.setAttribute('aria-busy', 'false');
+      productGrid.setAttribute('aria-busy', 'false');
+      announce(message);
+    });
+
+  /* ==================== Tabs ==================== */
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+
+  function selectTab(panelId, focus) {
+    tabs.forEach((tab) => {
+      const on = tab.getAttribute('aria-controls') === panelId;
+      tab.setAttribute('aria-selected', String(on));
+      tab.tabIndex = on ? 0 : -1;
+      document.getElementById(tab.getAttribute('aria-controls')).hidden = !on;
+      if (on && focus) tab.focus();
     });
   }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => {
+      const id = tab.getAttribute('aria-controls');
+      selectTab(id);
+      history.replaceState(null, '', '#' + id);
+    });
+    // 左右キーで隣のタブへ、Home / End で端へ(WAI-ARIA Tabs パターン・自動で切り替える)
+    tab.addEventListener('keydown', (e) => {
+      let next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      else if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (!next) return;
+      e.preventDefault();
+      const id = next.getAttribute('aria-controls');
+      selectTab(id, true);
+      history.replaceState(null, '', '#' + id);
+    });
+  });
+
+  // URL のハッシュに合わせてタブを選ぶ。#apps / #business はタブ、#shelf-… はアプリのタブの中の棚
+  function scrollToHash() {
+    const hash = location.hash;
+    if (hash === '#apps' || hash === '#business') {
+      selectTab(hash.slice(1));
+      document.getElementById('shelf').scrollIntoView();
+    } else if (hash.startsWith('#shelf-')) {
+      selectTab('apps');
+      const target = document.getElementById(hash.slice(1));
+      if (target) target.scrollIntoView();
+    }
+  }
+  window.addEventListener('hashchange', scrollToHash);
+  if (location.hash === '#apps' || location.hash === '#business') scrollToHash();
 
   /* ==================== Modal ==================== */
   const overlay = document.getElementById('modal-overlay');
   const modalClose = document.getElementById('modal-close');
-  const modalCta = document.getElementById('modal-cta');
   let lastFocused = null;
-  let currentProduct = null;
 
   // モーダル表示中は背景ツリーを inert 化してフォーカス・支援技術の対象から外す。
   // 対象は data-inert-target 属性で指定する(CSSクラス名のリネームに影響されない)。
@@ -1082,7 +1051,6 @@
   function openModal(id, trigger) {
     const p = PRODUCTS.find((item) => item.id === id);
     if (!p) return;
-    currentProduct = p;
     lastFocused = trigger || document.activeElement;
 
     setIcon(document.getElementById('modal-icon'), p.icon);
@@ -1093,8 +1061,8 @@
     priceEl.textContent = p.price;
     priceEl.appendChild(el('span', 'per', p.per));
     const feat = document.getElementById('modal-features');
-    feat.innerHTML = '';
-    p.features.forEach((f) => feat.appendChild(el('li', null, f)));
+    feat.replaceChildren();
+    (Array.isArray(p.features) ? p.features : []).forEach((f) => feat.appendChild(el('li', null, f)));
 
     overlay.classList.add('is-open');
     document.body.classList.add('is-modal-open');
@@ -1107,7 +1075,6 @@
     document.body.classList.remove('is-modal-open');
     setBackgroundInert(false); // フォーカスを戻す前に inert 解除が必須
     if (lastFocused && lastFocused.focus) lastFocused.focus();
-    currentProduct = null;
   }
 
   modalClose.addEventListener('click', closeModal);
@@ -1131,11 +1098,10 @@
       return;
     }
     // フォーカストラップ: Tab は常に preventDefault し、移動先をここで完全に管理する。
-    // ブラウザのデフォルトTab移動には一切頼らない(モーダル外・ブラウザUIへの脱出を防ぐ)。
     if (e.key === 'Tab') {
       e.preventDefault();
       const focusables = Array.from(
-        overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+        overlay.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')
       ).filter((node) => !node.disabled && node.getClientRects().length > 0);
       if (!focusables.length) return;
       const idx = focusables.indexOf(document.activeElement);
@@ -1147,106 +1113,6 @@
       }
       next.focus();
     }
-  });
-
-  // 「導入相談する」→ Servicesへスクロール + 該当カテゴリタグを選択
-  modalCta.addEventListener('click', () => {
-    const categoryId = currentProduct ? currentProduct.categoryId : null;
-    closeModal();
-    if (categoryId) selectCategory(categoryId);
-    const target = document.getElementById('services');
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  /* ==================== Category tags ==================== */
-  // 単一選択に統一(モーダル経由の selectCategory と同じ挙動)。
-  // 選択中のタグをもう一度クリックすると未選択に戻せる。
-  const tags = Array.from(document.querySelectorAll('.tag'));
-
-  tags.forEach((tag) => {
-    tag.addEventListener('click', () => {
-      const wasPressed = tag.getAttribute('aria-pressed') === 'true';
-      tags.forEach((t) => t.setAttribute('aria-pressed', 'false'));
-      if (!wasPressed) tag.setAttribute('aria-pressed', 'true');
-    });
-  });
-
-  // 照合は data-category のIDで行う(表示文言が変わっても連携が壊れないように)
-  function selectCategory(categoryId) {
-    tags.forEach((tag) => {
-      tag.setAttribute('aria-pressed', String(tag.getAttribute('data-category') === categoryId));
-    });
-  }
-
-  /* ==================== Form validation & submit ==================== */
-  const form = document.getElementById('contact');
-  const successBox = document.getElementById('form-success');
-
-  // 見た目(.invalid)と支援技術向け(aria-invalid / aria-describedby)を必ず同時に切り替える。
-  // aria-describedby はエラー表示中のみ付与する(非表示の err-msg を参照させたままにしない)。
-  function setInvalid(fieldName, invalid) {
-    const field = form.querySelector(`[data-field="${fieldName}"]`);
-    if (!field) return invalid;
-    field.classList.toggle('invalid', invalid);
-    const input = field.querySelector('input, textarea');
-    const msg = field.querySelector('.err-msg');
-    if (input) {
-      input.setAttribute('aria-invalid', String(invalid));
-      if (invalid && msg && msg.id) {
-        input.setAttribute('aria-describedby', msg.id);
-      } else {
-        input.removeAttribute('aria-describedby');
-      }
-    }
-    return invalid;
-  }
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('f-name');
-    const email = document.getElementById('f-email');
-    const detail = document.getElementById('f-detail');
-
-    // メールはネイティブバリデーション(type="email")と正規表現の両方を通す。
-    // ラベル部は英数字で開始・終了し、TLDは2文字以上を要求。
-    const emailVal = email.value.trim();
-    const emailOk = email.validity.valid &&
-      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/.test(emailVal);
-
-    const nameBad = setInvalid('name', name.value.trim() === '');
-    const emailBad = setInvalid('email', !emailOk);
-    const detailBad = setInvalid('detail', detail.value.trim() === '');
-
-    if (nameBad || emailBad || detailBad) {
-      const firstBad = form.querySelector('.field.invalid input, .field.invalid textarea');
-      if (firstBad) firstBad.focus();
-      return;
-    }
-
-    // 実送信は行わない(見た目の状態遷移のみ)
-    form.classList.add('is-hidden');
-    successBox.classList.add('is-open');
-    successBox.focus();
-  });
-
-  // 入力し直したらエラー表示を解除(aria属性も含めて setInvalid 経由で戻す)
-  ['f-name', 'f-email', 'f-detail'].forEach((id) => {
-    const input = document.getElementById(id);
-    input.addEventListener('input', () => {
-      const field = input.closest('.field');
-      if (field && field.classList.contains('invalid')) {
-        setInvalid(field.getAttribute('data-field'), false);
-      }
-    });
-  });
-
-  document.getElementById('form-reset').addEventListener('click', () => {
-    form.reset();
-    form.classList.remove('is-hidden');
-    successBox.classList.remove('is-open');
-    const first = document.getElementById('f-name');
-    if (first) first.focus();
   });
 
   /* ==================== Mobile menu ==================== */
@@ -1267,61 +1133,6 @@
       mobileMenu.classList.remove('is-open');
     });
   });
-
-  /* ==================== Scroll spy ==================== */
-  const spySections = ['products', 'services', 'about'].map((id) => document.getElementById(id));
-  const spyLinks = Array.from(document.querySelectorAll('[data-spy]'));
-  let spyTicking = false;
-
-  // セクション位置はキャッシュし、スクロール中はレイアウト読み取りをしない。
-  // 再計測は resize / load 時のみ(スクロール毎の offsetTop 読みによるリフロー誘発を回避)。
-  let spyPositions = [];
-  let spyDocHeight = 0;
-
-  function measureSpy() {
-    const scrollY = window.scrollY;
-    spyPositions = spySections.map((sec) => {
-      if (!sec) return null;
-      return { id: sec.id, top: sec.getBoundingClientRect().top + scrollY };
-    });
-    spyDocHeight = document.documentElement.scrollHeight;
-  }
-
-  function updateSpy() {
-    spyTicking = false;
-    const offset = window.scrollY + 120; // sticky header + 余裕分
-    let active = null;
-    spyPositions.forEach((pos) => {
-      if (pos && pos.top <= offset) active = pos.id;
-    });
-    // ページ末尾ではAboutを確実にアクティブに
-    if (window.innerHeight + window.scrollY >= spyDocHeight - 4) {
-      active = 'about';
-    }
-    spyLinks.forEach((link) => {
-      link.classList.toggle('active', link.getAttribute('data-spy') === active);
-    });
-  }
-
-  function requestSpyUpdate() {
-    if (!spyTicking) {
-      spyTicking = true;
-      window.requestAnimationFrame(updateSpy);
-    }
-  }
-
-  window.addEventListener('scroll', requestSpyUpdate, { passive: true });
-  window.addEventListener('resize', () => {
-    measureSpy();
-    requestSpyUpdate();
-  });
-  // フォント読み込み等で確定後の位置に更新
-  window.addEventListener('load', () => {
-    measureSpy();
-    requestSpyUpdate();
-  });
-  measureSpy();
-  updateSpy();
 </script>
 </body>
 </html>

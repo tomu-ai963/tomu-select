@@ -1,0 +1,343 @@
+{
+  "shelves": [
+    { "id": "kurashi", "title": "暮らし・道具" },
+    { "id": "nougyo", "title": "農業・園芸" },
+    { "id": "biyou", "title": "美容・健康" },
+    { "id": "uranai", "title": "占い・スピリチュアル" },
+    { "id": "asobi", "title": "音・遊び" },
+    { "id": "dev", "title": "開発者向け" }
+  ],
+  "apps": [
+    {
+      "id": "chlorine-log",
+      "shelf": "kurashi",
+      "name": "残留塩素 検査記録",
+      "desc": "簡易水道の毎日の残留塩素の検査を、紙の様式と同じ表で記録。月ごとにメールで提出できます。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/chlorine-log/",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "bouon-zairyo",
+      "shelf": "kurashi",
+      "name": "防音室 材料帳",
+      "desc": "部屋の寸法から、防音室に使う材料の数・重さ・値段と、床にかかる重さを計算します。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/bouon-zairyo/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "voice-memo-pwa",
+      "shelf": "kurashi",
+      "name": "Voice Memo",
+      "desc": "スマホで録音して、端末の中に保存するボイスレコーダー。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/voice-memo-pwa/",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "geo-memo",
+      "shelf": "kurashi",
+      "name": "GeoMemo",
+      "desc": "いる場所の位置情報をつけて、メモを残します。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/geo-memo/",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "birthday-log",
+      "shelf": "kurashi",
+      "name": "誕生日メモ",
+      "desc": "人とペットの誕生日を書きとめておくメモ。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/birthday-log/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "colloion",
+      "shelf": "kurashi",
+      "name": "Colloion",
+      "desc": "コロイド・イオン溶液の電解調製を記録・計算する、趣味実験のノート。端末どうしで同期もできます。",
+      "price": "free",
+      "url": "https://colloion.tomu-ai.dev",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "tomu-system",
+      "shelf": "kurashi",
+      "name": "とむSYSTEM",
+      "desc": "日常のちょっとした場面に特化した AI ミニアプリ集。",
+      "price": "paid",
+      "url": "https://tomu-ai963.github.io/tomu-system/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "minutes-ai",
+      "shelf": "kurashi",
+      "name": "minutes-ai",
+      "desc": "音声ファイルから議事録を作ります。自分の API キーを使い、議事録はサーバーに残しません。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/minutes-ai/",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "nougyo-shushi",
+      "shelf": "nougyo",
+      "name": "農業収支ノート",
+      "desc": "確定申告の「収支内訳書（農業所得用）」と同じ並びで記帳できる、個人農家向けの収支ノート。",
+      "price": "free",
+      "url": "https://nougyo.tomu-ai.dev",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "hodagi-log",
+      "shelf": "nougyo",
+      "name": "ほだ木 植菌記録メモ",
+      "desc": "原木しいたけのほだ木に植菌した記録を残すメモ。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/hodagi-log/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "pollenia",
+      "shelf": "nougyo",
+      "name": "Pollenia",
+      "desc": "植物の交配・育種の記録を管理して、共有できます。AI の相談機能は有料プランです。",
+      "price": "both",
+      "url": "https://pollenia.tomu-ai.dev",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "bitane",
+      "shelf": "biyou",
+      "name": "BITANE（美種）",
+      "desc": "限られた予算と時間から、美容と健康の「今月やること」を決めます。",
+      "price": "both",
+      "url": "https://bitane.tomu-ai.dev",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "tomu-mystic",
+      "shelf": "uranai",
+      "name": "とむMYSTIC",
+      "desc": "星読み・数秘術・タロットなど、30本以上の AI 占い。有料プランは準備中です。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/tomu-mystic/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "oriacle",
+      "shelf": "uranai",
+      "name": "Oriacle",
+      "desc": "占星術・数秘・タロットを、自己理解の道具として捉え直す AI サービス。",
+      "price": "soon",
+      "url": "https://tomu-ai963.github.io/oriacle/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "celestia",
+      "shelf": "uranai",
+      "name": "CELESTIA",
+      "desc": "生まれた日時の空を 3D の天球で見られます。占星術のサインと、実際の星座のずれも分かります。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/celestia/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "yama-no-koyomi",
+      "shelf": "uranai",
+      "name": "山の暦",
+      "desc": "月の満ち欠けと、今月の吉日を表示する暦。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/yama-no-koyomi/",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "shrine-map-project",
+      "shelf": "uranai",
+      "name": "神社マップ",
+      "desc": "神社を地図で探して、御朱印を記録できます。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/shrine-map-project/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "kunkunshi-player",
+      "shelf": "asobi",
+      "name": "工工四プレイヤー",
+      "desc": "沖縄三線の楽譜（工工四）を書くと音が鳴ります。勘所をタップして演奏も。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/kunkunshi-player/",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "sanshin-app",
+      "shelf": "asobi",
+      "name": "三線 練習帳",
+      "desc": "三線の初心者向け。本調子の勘所と工工四を、ブラウザだけで練習できます。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/sanshin-app/",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "binaural-beats",
+      "shelf": "asobi",
+      "name": "Binaural Beats",
+      "desc": "左右の耳に違う周波数を流す、バイノーラルビート。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/binaural-beats/",
+      "mobile": true,
+      "offline": true
+    },
+    {
+      "id": "goat-garden",
+      "shelf": "asobi",
+      "name": "やぎさん牧場",
+      "desc": "ヤギを追い込んで育てる、ブラウザの牧場ゲーム。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/goat-garden/",
+      "mobile": true,
+      "offline": false
+    },
+    {
+      "id": "neon-cyber-survivor",
+      "shelf": "asobi",
+      "name": "NEON CYBER SURVIVOR",
+      "desc": "画像も音声ファイルも使わずに動く、ネオン風の 2D シューティング。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/neon-cyber-survivor/",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "workers-auth",
+      "shelf": "dev",
+      "name": "workers-auth",
+      "desc": "Cloudflare Workers 向けの認証ライブラリ。セッション・ログイン・CSRF 対策をまとめて扱えます。",
+      "price": "free",
+      "url": "https://github.com/tomu-ai963/workers-auth",
+      "link": "github",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "keynest",
+      "shelf": "dev",
+      "name": "KeyNest",
+      "desc": "API キーを OS の資格情報ストアに保管する、クラウドを使わないキー管理アプリ（デスクトップ）。",
+      "price": "free",
+      "url": "https://github.com/tomu-ai963/keynest",
+      "link": "github",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "llm-orchestrator",
+      "shelf": "dev",
+      "name": "LLM Orchestrator",
+      "desc": "Termux から Claude / ChatGPT / Grok に、同じ文脈で質問できる CLI。",
+      "price": "free",
+      "url": "https://github.com/tomu-ai963/llm-orchestrator",
+      "link": "github",
+      "mobile": false,
+      "offline": false
+    },
+    {
+      "id": "hermes-agent-quiz",
+      "shelf": "dev",
+      "name": "Hermes Agent クイズ",
+      "desc": "Hermes Agent の使い方を、クイズで学べます。",
+      "price": "free",
+      "url": "https://tomu-ai963.github.io/hermes-agent-quiz/",
+      "mobile": false,
+      "offline": false
+    }
+  ],
+  "business": [
+    {
+      "id": "ap-invoice",
+      "icon": "invoice",
+      "name": "AP Invoice Reader",
+      "desc": "請求書PDFをAIが構造化データへ自動変換。会計システム連携まで見据えた抽出精度を、経理の現場基準で。",
+      "fullDesc": "毎月届く形式バラバラの請求書PDFを、勘定科目・税区分まで揃った構造化データに自動変換します。人の目によるダブルチェックを前提とした確信度スコア付きで、経理業務の締め作業を大幅に短縮します。",
+      "price": "¥48,000",
+      "per": "/月",
+      "category": "業務自動化",
+      "features": ["多様な請求書レイアウトの自動認識", "項目ごとの確信度スコア表示", "会計システム向けCSV / API出力", "仕訳ルールの学習・カスタマイズ", "処理履歴の監査ログ"]
+    },
+    {
+      "id": "contract-review",
+      "icon": "shield",
+      "name": "Contract Review AI",
+      "desc": "建設業向け契約書レビュー支援。リスク条項の検出と修正提案を、監査ログ付きで安全に運用できます。",
+      "fullDesc": "建設業の契約実務に特化したレビューエンジンが、不利な条項・欠落しがちな条項を検出し、修正文案まで提案します。すべてのレビュー実行が監査ログとして残るため、社内統制の要件にもそのまま対応できます。",
+      "price": "¥120,000",
+      "per": "/月",
+      "category": "AIエージェント",
+      "features": ["建設業特化のリスク条項検出", "修正文案の自動提案", "レビュー実行の完全な監査ログ", "社内ひな形との差分比較", "弁護士レビュー連携ワークフロー"]
+    },
+    {
+      "id": "knowledge-rag",
+      "icon": "search",
+      "name": "Knowledge RAG",
+      "desc": "社内ドキュメントを横断検索できるRAG基盤。根拠付きの回答で、ナレッジの属人化を解消します。",
+      "fullDesc": "規程・議事録・技術資料など社内に散らばるドキュメントを一元インデックス化し、自然文の質問に根拠リンク付きで回答します。「どこに書いてあるか分からない」を解消し、ベテランの知見を組織の資産に変えます。",
+      "price": "¥68,000",
+      "per": "/月",
+      "category": "RAG / 検索基盤",
+      "features": ["複数ソースの横断インデックス", "根拠箇所へのリンク付き回答", "回答品質メトリクスの計測", "アクセス権限に応じた検索制御", "Slack / Teams連携"]
+    },
+    {
+      "id": "deflect",
+      "icon": "chart",
+      "name": "Deflect Analytics",
+      "desc": "問い合わせ自動応答の解決率を可視化。AIが答えた・答えられなかったを計測し、改善サイクルを回せます。",
+      "fullDesc": "AI自動応答の「解決できた / できなかった」を定量計測し、ナレッジの穴を特定します。導入して終わりになりがちなチャットボットを、データに基づいて育て続けるための分析基盤です。",
+      "price": "¥35,000",
+      "per": "/月",
+      "category": "PoC検証",
+      "features": ["解決率・エスカレーション率の計測", "未解決トピックの自動クラスタリング", "ナレッジ改善の優先度提案", "週次サマリーレポート配信"]
+    },
+    {
+      "id": "agent-workbench",
+      "icon": "board",
+      "name": "Agent Workbench",
+      "desc": "業務エージェントの構築・運用ダッシュボード。ツール接続と実行ログを一箇所で管理できます。",
+      "fullDesc": "社内業務を任せるAIエージェントの構築から運用までを一つの画面で。ツール接続の管理、実行ログの追跡、失敗時のリトライ制御まで、エージェント運用に必要な足回りをまとめて提供します。",
+      "price": "¥88,000",
+      "per": "/月",
+      "category": "AIエージェント",
+      "features": ["ノーコードのツール接続管理", "実行ログのステップ単位トレース", "失敗時のリトライ・通知制御", "複数エージェントの一元監視", "コスト・トークン使用量の可視化"]
+    },
+    {
+      "id": "api-starter",
+      "icon": "code",
+      "name": "API Starter Kit",
+      "desc": "Claude API連携の実装テンプレート集。認証・レート制御・構造化出力まで、初日から本番品質で。",
+      "fullDesc": "Claude APIを本番投入する際に必ず必要になる実装パターンを、動くコードとして提供します。認証・レート制御・構造化出力・エラーハンドリングを網羅し、検証開始から本番リリースまでの期間を短縮します。",
+      "price": "¥29,800",
+      "per": "買い切り",
+      "category": "API連携",
+      "features": ["認証・キー管理のベストプラクティス", "レート制御・リトライ実装", "構造化出力のスキーマ設計例", "ストリーミング応答の実装例", "導入サポート(30日)付き"]
+    }
+  ]
+}
