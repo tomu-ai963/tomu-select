@@ -1,0 +1,10 @@
+{
+  "name": "tomu-select",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.150.0"
+  }
+}

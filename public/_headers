@@ -1,0 +1,8 @@
+# すべてのページに付けるセキュリティヘッダー（Cloudflare Workers の静的アセット配信が読む）
+# スクリプトは app.js だけ（ページ内に直接書いたスクリプトや外部のスクリプトは動かさない）。
+# スタイルは index.html 内の <style> を使うので 'unsafe-inline' を残す。
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

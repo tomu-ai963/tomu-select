@@ -1,0 +1,14 @@
+// tomu-select: public/ の静的ファイルを配信するだけの Worker（プログラムは持たない）。
+// deploy は `npx wrangler deploy`（とむの確認を取ってから）。account_id は書かない（wrangler login のアカウントを使う）
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tomu-select",
+  "compatibility_date": "2026-10-01",
+  // 入口はカスタムドメイン 1 つに絞る（書かないと deploy のたびに workers.dev / Preview URL が既定で有効になる）
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "tomu-select.tomu-ai.dev", "custom_domain": true }],
+  "assets": {
+    "directory": "./public/"
+  }
+}

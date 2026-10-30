@@ -3,7 +3,16 @@
 tomu select — 個人開発者のとむが作ったアプリの棚
 
 暮らしの道具から占い、音で遊ぶものまで、作ったアプリを目的別の棚に並べるページです。
-依存なし・ビルドなしの `index.html` と、一覧のデータ `apps.json`、窓の画像 `assets/window-milkyway.webp` で構成されています。
+ビルドなし。公開するファイルはすべて `public/` にあります。
+
+| ファイル | 中身 |
+| --- | --- |
+| `public/index.html` | ページ（スタイルもここ） |
+| `public/app.js` | 描画・タブ・詳細表示などのスクリプト |
+| `public/apps.json` | アプリ・棚・法人向け商品の一覧 |
+| `public/assets/window-milkyway.webp` | 窓の画像 |
+| `public/_headers` | セキュリティヘッダー（CSP など） |
+| `wrangler.jsonc` | Cloudflare の設定（`public/` を配信するだけの Worker） |
 
 ## デザインのモチーフ
 
@@ -19,13 +28,19 @@ tomu select — 個人開発者のとむが作ったアプリの棚
 
 ## 表示方法
 
-`apps.json` を `fetch` で読み込むため、`index.html` をファイルとして直接開くと一覧が出ません（ブラウザが `file://` からの読み込みを止めるため）。ローカルでは簡易サーバー経由で開きます。
+`apps.json` を `fetch` で読み込むため、`index.html` をファイルとして直接開くと一覧が出ません（ブラウザが `file://` からの読み込みを止めるため）。ローカルでは本番と同じ配信（ヘッダー込み）で開きます。
 
 ```bash
-npx serve .            # または: python -m http.server
+npm install
+npm run dev            # wrangler dev → http://localhost:8787
 ```
 
-公開は GitHub Pages（<https://tomu-ai963.github.io/tomu-select/>）。
+## 公開
+
+Cloudflare Workers の静的アセット配信で <https://tomu-select.tomu-ai.dev> に出す（workers.dev と Preview URL は無効）。
+デプロイは `npx wrangler deploy`（とむの確認を取ってから）。
+
+GitHub のリポジトリは Public のまま、GitHub Pages は Cloudflare で公開できたら止める。
 
 ## 構成
 
@@ -52,7 +67,8 @@ npx serve .            # または: python -m http.server
 
 ## 実装メモ
 
-- テキストはすべて `textContent` で入れる。`innerHTML` を使うのはページ内に定義したアイコンの SVG だけ
+- スクリプトは `app.js` だけ。CSP で、ページ内に直接書いたスクリプトや外部のスクリプトは動かない（`public/_headers`）
+- テキストはすべて `textContent` で入れる。`innerHTML` を使うのは `app.js` 内に定義したアイコンの SVG だけ
 - リンク先は `https://` で始まるものだけを出す
 - 読み込み中はスケルトン、読み込みに失敗したらメッセージを表示する
 - カラー・シャドウは CSS カスタムプロパティでトークン化。ライト / ダーク対応（`prefers-color-scheme` + `data-theme` 属性）
